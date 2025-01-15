@@ -25,7 +25,7 @@ namespace Modelo.Aplicacao.Parsers
                 .ForMember(c => c.Descricao, m => m.MapFrom(c => c.Descricao))
                 .ForMember(c => c.Claims, m => m.Ignore());
 
-            CreateMap<Log, LogDTO>()
+            CreateMap<LogTransacoes, LogDTO>()
                 .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
                 .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
                 .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))

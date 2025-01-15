@@ -18,10 +18,10 @@ namespace Modelo.Dados.Repositorios
         {
             _contexto = contexto;
         }
-        public async Task<IList<Log>> BuscarPorIdEntidade(Guid idEntidade)
+        public async Task<IList<LogTransacoes>> BuscarPorIdEntidade(Guid idEntidade)
         => await _contexto.Logs.Where(c => c.EntidadeId == idEntidade && c.Comando != "DELETE").Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
-        public async Task<IList<Log>?> BuscarPorIdsEntidades(IList<Guid> idsEntidades, DateTime? dataInicio, DateTime? dataFim)
+        public async Task<IList<LogTransacoes>?> BuscarPorIdsEntidades(IList<Guid> idsEntidades, DateTime? dataInicio, DateTime? dataFim)
         => await _contexto.Logs.Where(c => idsEntidades.Contains(c.EntidadeId) && (dataInicio.HasValue ? c.Data.Date >= dataInicio.Value.Date : true) && (dataFim.HasValue ? c.Data.Date <= dataFim.Value.Date : true)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
     }
 }

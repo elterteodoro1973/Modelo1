@@ -29,7 +29,7 @@ namespace Modelo.Dados.Repositorios
         {
             return await _contexto.Perfis.Where(c => c.Administrador == true).FirstOrDefaultAsync();
         }
-        public async Task<IList<Log>> BuscarTodosEntidadeId(Guid? entidadeId)
+        public async Task<IList<LogTransacoes>> BuscarTodosEntidadeId(Guid? entidadeId)
         {
             return await _contexto.Logs.Where(c => c.EntidadeId == entidadeId).ToListAsync();
         }

@@ -23,6 +23,6 @@ namespace Modelo.Dominio.Interfaces.Repositorios
         Task<bool> IdUsuarioValido(Guid id);
         Task<bool> VerficarSeUsuarioEAdmDAEE(Guid usuarioId);
         //Task<Usuario?> BuscarPorTokenEEmailResetSenha(Guid token, string email);
-        Task<IList<Log>?> BuscarLogPorUsuarioId(Guid usuarioId);
+        Task<IList<LogTransacoes>?> BuscarLogPorUsuarioId(Guid usuarioId);
     }
 }

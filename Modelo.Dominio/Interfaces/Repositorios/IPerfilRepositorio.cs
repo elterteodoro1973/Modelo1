@@ -12,7 +12,7 @@ namespace Modelo.Dominio.Interfaces.Repositorios
         Task<IList<Perfil>> BuscarPerfis();
         Task<Perfil?> BuscarPorIdParaEdicao(Guid id);
         Task<Perfil?> BuscarPerfilAdministrador();
-        Task<IList<Log>> BuscarTodosEntidadeId(Guid? idPerfil);
+        Task<IList<LogTransacoes>> BuscarTodosEntidadeId(Guid? idPerfil);
         //Task<bool> PerfilPossuiUsuariosAssociados(Guid id);
         Task<bool> VerificarSeIdEPerfilAdmDAEE(Guid id);
         

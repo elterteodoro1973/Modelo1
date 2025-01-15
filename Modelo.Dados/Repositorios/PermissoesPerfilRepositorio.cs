@@ -22,7 +22,7 @@ namespace Modelo.Dados.Repositorios
         public async Task<IList<Guid>> BuscarIdsPermissoesPerfilPorPerfilId(Guid idPerfil)
         => await _contexto.PermissaoPerfils.IgnoreQueryFilters().Where(c => c.PerfilId == idPerfil).Select(c => c.Id).ToListAsync();
 
-        public async Task<IList<Log>> BuscarLogsPorIdsPermissoes(IList<Guid> idsPermissoes)
+        public async Task<IList<LogTransacoes>> BuscarLogsPorIdsPermissoes(IList<Guid> idsPermissoes)
         => await _contexto.Logs.Where(c => idsPermissoes.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
         public async Task<IList<PermissaoPerfil>?> BuscarPermissoesPorPerfil(Guid idPerfil)

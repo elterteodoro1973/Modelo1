@@ -9,7 +9,7 @@ namespace Modelo.Dominio.Interfaces.Repositorios
 {
     public interface ILogRepositorio
     {
-        Task<IList<Log>> BuscarPorIdEntidade(Guid idEntidade);
-        Task<IList<Log>?> BuscarPorIdsEntidades(IList<Guid> idsEntidades, DateTime? dataInicio, DateTime? dataFim);
+        Task<IList<LogTransacoes>> BuscarPorIdEntidade(Guid idEntidade);
+        Task<IList<LogTransacoes>?> BuscarPorIdsEntidades(IList<Guid> idsEntidades, DateTime? dataInicio, DateTime? dataFim);
     }
 }

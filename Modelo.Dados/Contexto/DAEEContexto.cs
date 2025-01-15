@@ -18,7 +18,7 @@ namespace Modelo.Dados.Contexto
         public DbSet<PermissaoPerfil> PermissaoPerfils { get; set; }
         public DbSet<Perfil> Perfis { get; set; }
         
-        public DbSet<Log> Logs { get; set; }
+        public DbSet<LogTransacoes> Logs { get; set; }
         
 
         
@@ -73,7 +73,7 @@ namespace Modelo.Dados.Contexto
 
                 foreach (var item in ChangeTracker.Entries())
                 {
-                    if (item.Entity is Log || item.State is EntityState.Detached or EntityState.Unchanged)
+                    if (item.Entity is LogTransacoes || item.State is EntityState.Detached or EntityState.Unchanged)
                         continue;
 
                     if (item.State is EntityState.Modified)
@@ -92,7 +92,7 @@ namespace Modelo.Dados.Contexto
 
                             if (propriedade.IsModified && valorAnterior != valorAtual)
                             {
-                                var log = new Log
+                                var log = new LogTransacoes
                                 {
                                     Comando = "UPDATE",
                                     Data = DateTime.Now,

@@ -42,7 +42,7 @@ namespace Modelo.Aplicacao.Parsers
           
           
 
-            CreateMap<LogDTO, Log>()
+            CreateMap<LogDTO, LogTransacoes>()
             .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
             .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
             .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))

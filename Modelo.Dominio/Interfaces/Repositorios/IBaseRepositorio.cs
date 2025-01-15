@@ -18,12 +18,12 @@ namespace Modelo.Dominio.Interfaces.Repositorios
         Task Excluir(T entidadeBase);
         Task<T> BuscarPorId(Guid Id, bool rastreioEntidade = true, bool incluirExcluidas = false);
         Task<IList<T>> BuscarTodos(bool rastreioEntidade = true, bool incluirExcluidas = false);
-        Task<IList<Log>?> BuscarLogsPorIds(IList<Guid> ids);
+        Task<IList<LogTransacoes>?> BuscarLogsPorIds(IList<Guid> ids);
 
-        Task<List<Log>?> BuscarLogsPorIdsDatas(IList<Guid> ids, DateTime? DataInicial, DateTime? DataFinal);
+        Task<List<LogTransacoes>?> BuscarLogsPorIdsDatas(IList<Guid> ids, DateTime? DataInicial, DateTime? DataFinal);
 
-        Task<List<Log>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal);
-        Task<IList<Log>?> BuscarLogsPorId(Guid id);
+        Task<List<LogTransacoes>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal);
+        Task<IList<LogTransacoes>?> BuscarLogsPorId(Guid id);
         Task AdicionarLista(IList<T> entidades);
         Task RemoverLista(IList<T> entidades);
         Task AtualizarLista(IList<T> entidades);

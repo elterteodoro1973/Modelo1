@@ -13,6 +13,6 @@ namespace Modelo.Dominio.Interfaces.Repositorios
 
         Task<IList<Guid>> BuscarIdsPermissoesPerfilPorPerfilId(Guid idPerfil);
 
-        Task<IList<Log>> BuscarLogsPorIdsPermissoes(IList<Guid> idsPermissoes);
+        Task<IList<LogTransacoes>> BuscarLogsPorIdsPermissoes(IList<Guid> idsPermissoes);
     }
 }

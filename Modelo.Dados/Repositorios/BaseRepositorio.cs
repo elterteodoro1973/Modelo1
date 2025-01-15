@@ -30,7 +30,7 @@ namespace Modelo.Dados.Repositorios
         public virtual async Task Adicionar(T entidade)
         {
             await _contexto.Set<T>().AddAsync(entidade);
-            var log = new Log
+            var log = new LogTransacoes
             {
                 Id = Guid.NewGuid(),
                 Data = DateTime.Now,
@@ -112,7 +112,7 @@ namespace Modelo.Dados.Repositorios
         {
             entidadeBase.Excluido = true;
             _contexto.Set<T>().Update(entidadeBase);
-            var log = new Log
+            var log = new LogTransacoes
             {
                 Id = Guid.NewGuid(),
                 Data = DateTime.Now,
@@ -152,10 +152,10 @@ namespace Modelo.Dados.Repositorios
                 item.Excluido = true;
             }
             _contexto.Set<T>().UpdateRange(entidades);
-            List<Log> logs = new List<Log>();
+            List<LogTransacoes> logs = new List<LogTransacoes>();
             foreach (var item in entidades)
             {
-                var log = new Log
+                var log = new LogTransacoes
                 {
                     Id = Guid.NewGuid(),
                     Data = DateTime.Now,
@@ -199,12 +199,12 @@ namespace Modelo.Dados.Repositorios
             //await _contexto.Logs.AddRangeAsync(logs);
         }
 
-        public virtual async Task<IList<Log>?> BuscarLogsPorIds(IList<Guid> ids)
+        public virtual async Task<IList<LogTransacoes>?> BuscarLogsPorIds(IList<Guid> ids)
         => await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
 
 
-        public async Task<List<Log>?> BuscarLogsPorIdsDatas(IList<Guid> ids, DateTime? DataInicial, DateTime? DataFinal)
+        public async Task<List<LogTransacoes>?> BuscarLogsPorIdsDatas(IList<Guid> ids, DateTime? DataInicial, DateTime? DataFinal)
         {
             if (DataInicial != null && DataFinal != null)
             {
@@ -226,10 +226,10 @@ namespace Modelo.Dados.Repositorios
 
 
 
-        public virtual async Task<IList<Log>?> BuscarLogsPorId(Guid id)
+        public virtual async Task<IList<LogTransacoes>?> BuscarLogsPorId(Guid id)
         => await _contexto.Logs.Where(c => c.EntidadeId == id).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
-        public async Task<List<Log>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal)
+        public async Task<List<LogTransacoes>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal)
         {
             if (DataInicial != null && DataFinal != null)
             {

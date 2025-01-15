@@ -72,7 +72,7 @@ namespace Modelo.Dados.Repositorios
         public async Task<bool> VerficarSeUsuarioEAdmDAEE(Guid usuarioId)
         => await _contexto.Usuarios.Where(c => !c.Excluido && !c.Inativo && c.Id == usuarioId && c.Administrador).AnyAsync();
 
-        public async Task<IList<Log>?> BuscarLogPorUsuarioId(Guid usuarioId)
+        public async Task<IList<LogTransacoes>?> BuscarLogPorUsuarioId(Guid usuarioId)
         => await _contexto.Logs.Include(c => c.Usuario).Where(c => c.EntidadeId == usuarioId).AsNoTracking().ToListAsync();
     }
 }
