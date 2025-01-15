@@ -1,0 +1,41 @@
+﻿@using Modelo.Web.ViewModels.Usuarios;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<section class="c-login">
+    <article action="" class="c-login__box">
+        <header class="c-login__header">
+            <img src="~/imagens/main/logo-daee.png" alt="Logo do DAEE" />
+            <h2 class="c-login__title"> Sistema de Cobrança de Recursos Hídricos do Estado de São Paulo </h2>
+        </header>
+        <form asp-action="Login" class="c-login__form">
+            <h3 class="c-login__form--title"> Acesse o sistema </h3>
+
+            <div class="c-login__form--fieldset">
+                <div asp-validation-summary="All" class="text-danger justify-content-start"></div>
+                <div class="c-form__group form-group">
+                    <label asp-for="Usuario" class="c-form__label form-label control-label"></label>
+                    <input type="text" asp-for="Usuario" class="c-form__input form-control" placeholder="Digite seu e-mail">
+                    <span asp-validation-for="Usuario" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group form-group">
+                    <label asp-for="Senha" class="c-form__label form-label control-label"></label>
+                    <input asp-for="Senha" class="c-form__input form-control" placeholder="Digite a senha">
+                    <span asp-validation-for="Senha" class="form-text text-danger"></span>
+                </div>
+                <input type="submit" value="Continuar" class="o-btn o-btn--full o-btn-default">
+                <a href="@Url.Action("EsqueciSenha","Usuarios")" class="c-login__form--link">Esqueci minha senha</a>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    }

@@ -1,0 +1,64 @@
+﻿#linhaMenuEmpreendimento {
+    position: relative;
+    left: 190rem;
+    max-width: calc(100% - 189rem);
+    background-color: rgba(250, 250, 250, 1);
+    border-bottom: 1px solid rgba(224, 224, 224, 1)
+}
+
+#menuEmpreendimento {
+    height: 30px;
+    text-overflow: ellipsis;
+}
+
+    #menuEmpreendimento a {
+        text-overflow: ellipsis;
+        text-decoration: none;
+        font-size: 14px;
+        border-bottom: 1px solid transparent;
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 14px;
+        letter-spacing: 0em;
+        text-align: left;
+        color: rgba(102, 102, 102, 1);
+    }
+
+    #menuEmpreendimento li:not(:first-child):not(:last-child):not(.dropdownIcon):hover {
+        border-bottom: 1px solid rgba(102, 102, 102, 1);
+    }
+
+    #menuEmpreendimento li:not(:first-child):not(:last-child).ativo {
+        border-bottom: 2px solid rgba(102, 102, 102, 1);
+    }
+
+    #menuEmpreendimento li {
+        height:100%;
+        display: flex;
+        align-items:center;
+    }
+
+    #menuEmpreendimento .dropdown-toggle > span {
+        font-size: 14px;
+        padding-right: 1rem;
+    }
+
+    #menuEmpreendimento .dropdown-toggle:is(.btn-action) {
+        -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+        gap: 4rem;
+        border-radius: 4rem;
+        border: 1rem solid #02B2ED;
+        white-space: nowrap;
+        cursor: pointer;
+        background: #02B2ED;
+        color: #FAFAFA;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 1rem 8rem;
+    }
+
+    #menuEmpreendimento > .dropdown > li:not(:first-child):not(:last-child):hover {
+        border-bottom:none!important
+    }

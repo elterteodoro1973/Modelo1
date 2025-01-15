@@ -1,0 +1,341 @@
+﻿@using Modelo.Web.ViewModels.Perfis;
+@using Modelo.Web.ViewModels.Usuarios;
+@using System.Security.Claims;
+@model CadastrarPerfilUsuarioViewModel
+@{
+    ViewData["Title"] = "Permissões";
+}
+
+<h1 class="o-title">
+    PERMISSÕES DO USUÁRIO
+</h1>
+<partial name="~/Views/Shared/_Avisos.cshtml" />
+<form asp-action="Permissoes" method="post" class="c-form">
+    <div class="row">
+        <div class="col-12" style="margin-bottom:12rem">
+            <span>Nome</span>
+        </div>
+        <div class="col-12">
+            <label class="c-form__table--label">@Model.NomeUsuario</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12" style="margin-bottom:12rem">
+            <span>E-mail</span>
+        </div>
+        <div class="col-12">
+            <label class="c-form__table--label">@Model.Email</label>
+        </div>
+    </div>
+    <div class="c-form__section">
+        <span class="c-form__section--label">Permissões do usuário</span>
+        <div class="row">
+            <div class="c-form__group col-6">
+                <label asp-for="PerfilId" required class="c-form__label">Perfis Básicos</label>
+                <select asp-for="PerfilId" class="c-form__input c-form__input--select" required onchange="buscarPermissoesPerfil()" id="perfil">
+                    <option value="" disabled selected>Selecione ...</option>
+                    @if (ViewBag.Perfis != null && ViewBag.Perfis is List<PerfilViewModel>)
+                    {
+                        @foreach (var item in ViewBag.Perfis as List<PerfilViewModel>)
+                        {
+                            <option value="@item.Id">@item.Nome</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="PerfilId" class="form-text text-danger"></span>
+            </div>
+            @* <div class="c-form__group col-6 d-none" id="cbhUsuariocol">
+                <label asp-for="CbhId"  class="c-form__label">Escolha o CBH </label>
+                <select asp-for="CbhId" required class="c-form__input c-form__input--select" onchange="buscarPermissoesCBHSelecionda()" id="cbhUsuario">
+                    <option selected disabled value="@Html.Raw(Guid.Empty)">Selecione ...</option>
+                    @if (ViewBag.Cbhs != null && ViewBag.Cbhs is List<VisualizarCBHViewModel>)
+                    {
+                        @foreach (var item in ViewBag.Cbhs as List<VisualizarCBHViewModel>)
+                        {
+                            <option value="@item.Id">@item.NomeCBH</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CbhId" class="form-text text-danger"></span>
+            </div> *@
+        </div>
+
+        <div class="row">
+            <div class="c-form__group col-12 c-form__treeview d-none" id="permissoes">
+                <div class="row w-75" style="gap: 10px">
+                    <label class="c-form__label">Categorias</label>
+                    <select class="c-form__input c-form__input--select" id="categorias" onchange="exibirPermissoes()">
+                        <option selected disabled value="">Selecione ...</option>
+                        <option value="Todas">Todas as Categorias</option>
+                        @if (ViewBag.Categorias != null && ViewBag.Categorias is List<string>)
+                        {
+                            @foreach (var item in ViewBag.Categorias as List<string>)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="row">
+
+                    <div class="c-form__treeview--group" style="margin-top: 10rem" id="idTodasPermissoes">
+                        <label class="c-form__label c-form__check c-form__treeview--all">
+                            <input type="checkbox" name="" id="" /> Todas as Permissões
+                        </label>
+                    </div>
+                    @if (ViewBag.ClaimModulos != null && ViewBag.ClaimModulos is IList<Tuple<string, string, string, Claim>>)
+                    {
+                        var claims = ViewBag.ClaimModulos as IList<Tuple<string, string, string, Claim>>;
+                        @foreach (var modulo in claims.GroupBy(c => c.Item1))
+                        {
+                            <div class="c-form__treeview--group categorias" style="margin-top: 10rem; " id="@modulo.Key">
+                                <label class="c-form__label c-form__check c-form__treeview--parent">
+                                    <input type="checkbox" class="checkCategoria" name="" id="@string.Concat("check",modulo.Key)" /> @modulo.Key
+                                </label>
+                                <div class="c-form__treeview--group" style="margin-top:5rem; margin-left:4%">
+                                    @foreach (var paginas in modulo.GroupBy(c => c.Item2))
+                                    {
+                                        var nomePagina = paginas.First().Item3.Split("-")[0];
+                                        <label class="c-form__label c-form__check c-form__treeview--parent">
+                                            <input type="checkbox" name="" id="" /> @paginas.Key
+                                        </label>
+                                        <div class=" c-form__treeview--children">
+                                            @foreach (var pagina in paginas)
+                                            {
+                                                <label class="c-form__label c-form__check">
+                                                    <input class="valorClaim" type="checkbox" value="@pagina.Item3" name="" id="" style="margin-right:5rem" />@pagina.Item3
+                                                </label>
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="c-form__btn-group">
+        <input type="submit" id="btnSubmit" value="Salvar Alterações" class="o-btn o-btn-default">
+        <input type="button" value="Cancelar" class="o-btn o-btn-alt" onclick="window.location.href='@Url.Action("Index","Usuarios")'">
+    </div>
+
+</form>
+
+
+<script src="~/js/perfis.js" type="text/javascript"></script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+
+        $(window).on("load", function () {
+            buscarPermissoesPerfil();
+            buscarPermissoesCBHSelecionda();
+        })
+
+        const url = "@Url.Action("Permissoes","Usuarios", new { id = Model.UsuarioId})";
+        const modal = new bootstrap.Modal('#modalConfirmacao');
+        const usuarioId = '@Html.Raw(Model.UsuarioId)';
+        $("form").submit((e) => {
+            e.preventDefault();
+
+            $('#btnSubmit').attr('disabled', true);
+            if ($("form").valid()) {
+
+                $(".modal-body").html("<p class='lh-base'>Deseja confirmar allteração das permissões do usuário ?</p>")
+
+                $("#btnConfirmarModal").attr('onclick', 'editarPermissao()');
+                modal.show();
+
+            }
+
+        })
+
+        function editarPermissao(){
+
+            let claimsSelecionadas = [];
+
+            $('.valorClaim').each((i, element) => {
+                if ($(element).is(':checked')) {
+                    claimsSelecionadas.push($(element).val());
+                }
+            })
+
+
+
+            let data = {
+                usuarioId: usuarioId,
+                cbhId: $('#cbhUsuario option:selected').val(),
+                perfilId: $('#perfil option:selected').val(),
+                permissoes: claimsSelecionadas
+            };
+            modal.hide();
+            $.ajax({
+                url: `${url}`,
+                type: 'POST',
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                contentType: "application/json; charset=utf-8",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", `${pegarToken()}`);
+                },
+                data: JSON.stringify(data),
+                async: false
+            }).done((resultado) => {
+
+                if (resultado !== undefined) {
+                    alertBootstrapp(resultado, 'success')
+                }
+                $('#btnSubmit').attr('disabled', false);
+                $("#loadingDiv").hide();
+                
+
+            }).fail((jqXHR, textStatus, errorThrown) => {
+
+                if (jqXHR != undefined && jqXHR.responseJSON != undefined) {
+                    let mensagensErros = jqXHR.responseJSON;
+
+                    if (mensagensErros != undefined && Array.isArray(mensagensErros)) {
+                        mensagensErros.forEach(mensagem => {
+                            alertBootstrapp(mensagem, 'danger');
+                        })
+                    }
+
+                }
+                $('#btnSubmit').attr('disabled', false);
+                $("#loadingDiv").hide();
+                
+
+            })
+
+
+        }
+
+
+        function buscarPermissoesCBHSelecionda() {
+
+            let nomePerfilSelecionado = $('#perfil option:selected').html().toUpperCase().trim();
+
+            if (nomePerfilSelecionado === 'ADMINISTRADOR DAEE') {
+                $('.valorClaim').each((i, e) => {
+                    $(e).prop('checked', false);
+                });
+                return;
+            }
+
+            // $('#permissoes').addClass('d-none');
+            $("input[type=checkbox]").each((i, e) => {
+                $(e).prop('checked', false);
+            });
+
+            let cbhId = $('#cbhUsuario option:selected').val();
+            let usuarioId = '@Html.Raw(Model.UsuarioId)';
+            if (cbhId != '') {
+                $('#loadingDiv').show();
+                let url = '@Url.Action("BuscarPermissoesCBHUsuario","Usuarios")' + `?usuarioId=${usuarioId}&cbhId=${cbhId}`;
+                $.ajax({
+                    url: `${url}`,
+                    type: 'GET',
+                    headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                    contentType: "application/json; charset=utf-8",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", `${pegarToken()}`);
+                    },
+                    async: false
+                }).done((resultado) => {
+
+                    // if (resultado.perfilId != undefined && resultado.perfilId != null) {
+                    //     $('#perfil option:selected').prop('selected', false);
+                    //     $('#perfil option').each((i, e) => {
+                    //         if ($(e).val() == resultado.perfilId) {
+                    //             $(e).prop('selected', true);
+                    //         }
+                    //     })
+                    // }
+                    // else {
+                    //     $('#perfil option').each((i, e) => {
+                    //         if ($(e).prop('disabled')) {
+                    //             $(e).prop('selected', true);
+                    //         }
+                    //     })
+                    // }
+
+                    if (resultado.permissoes != undefined && resultado.permissoes != null && resultado.permissoes.length > 0) {
+                        $('input[type=checkbox]').each((i, e) => {
+                            $(e).prop('checked', false);
+                        })
+
+                        $('.valorClaim').each((i, e) => {
+                            if ($.inArray($(e).val(), resultado.permissoes) >= 0) {
+                                $(e).prop('checked', true);
+                            }
+                        })
+                    }
+                    else{
+                        $('input[type=checkbox]').each((i, e) => {
+                            $(e).prop('checked', false);
+                        })
+                    }
+
+
+                    $('#permissoes').removeClass('d-none');
+                    $("#loadingDiv").hide();
+
+                }).fail((jqXHR, textStatus, errorThrown) => {
+
+                    if (jqXHR != undefined && jqXHR.responseJSON != undefined) {
+                        let mensagensErros = jqXHR.responseJSON;
+
+                        if (mensagensErros != undefined && Array.isArray(mensagensErros)) {
+                            mensagensErros.forEach(mensagem => {
+                                alertBootstrapp(mensagem, 'danger');
+                            })
+                        }
+
+                    }
+                    $('#btnSubmit').attr('disabled', false);
+                    $('#permissoes').removeClass('d-none');
+                    $("#loadingDiv").hide();
+
+                })
+
+            }
+
+        }
+
+        function buscarPermissoesPerfil(){
+            let perfilIdSelecionado = $('#perfil option:selected').val();
+            let nomePerfilSelecionado = $('#perfil option:selected').html().toUpperCase();
+
+            $('.valorClaim').each((i, e) => {
+                $(e).prop('checked', false);
+            })
+
+            if (nomePerfilSelecionado === 'ADMINISTRADOR DAEE'){
+                $('#permissoes').addClass('d-none');
+                $('#cbhUsuariocol').addClass('d-none');
+                $('#cbhUsuario').val('@Html.Raw(Guid.Empty)');
+
+                
+            }
+            else
+            {
+                $('#permissoes').removeClass('d-none');
+                $('#cbhUsuariocol').removeClass('d-none');
+            }
+
+        }
+
+    </script>
+}

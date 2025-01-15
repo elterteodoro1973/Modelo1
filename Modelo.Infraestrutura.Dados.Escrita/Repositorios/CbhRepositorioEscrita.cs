@@ -1,0 +1,27 @@
+﻿using Modelo.Dominio.Interfaces.Repositorios.Escrita;
+using Modelo.Dominio.Modelos;
+using Modelo.Infraestrutura.Dados.Escrita.Contextos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Modelo.Infraestrutura.Dados.Escrita.Repositorios
+{
+    public class CbhRepositorioEscrita : BaseRepositorioEscrita<Cbh>, ICbhRepositorioEscrita
+    {
+        private readonly DaeeCobrancaContexto _contexto;
+        public CbhRepositorioEscrita(DaeeCobrancaContexto contexto) : base(contexto)
+        {
+            _contexto = contexto;
+        }
+
+        public override void Atualizar(Cbh entidade)
+        {
+            base.Atualizar(entidade);
+            _contexto.Entry(entidade).Property(c => c.Codigo).IsModified = false;
+        }
+
+    }
+}

@@ -1,0 +1,43 @@
+﻿.progress {
+    height: 30px;
+    width: 100% !important;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.legend-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top:10px;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    margin-left:20px;
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;    
+    border-radius: 15%; 
+}
+
+.legend-1 {
+    background: #0dcaf0;
+}
+
+.legend-2 {
+    background: #0d6efd;
+}
+
+.legend-3 {
+    background: #cfd0d2;
+}
+
+.bg-grey {
+    background-color: #cfd0d2;
+}

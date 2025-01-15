@@ -1,0 +1,203 @@
+﻿@using Modelo.Web.ViewModels.Perfis;
+@using System.Security.Claims;
+@model PerfilViewModel
+@{
+    TempData["Title"] = "Adicionar Perfil";
+}
+
+<partial name="~/Views/Shared/_Avisos.cshtml" />
+<form asp-action="Adicionar" method="post" class="c-form">
+
+    <h1 class="o-title"> NOVO PERFIL </h1>
+    <div class="c-form__section">
+        <span class="c-form__section--label">Dados Básicos</span>
+        <div class="row">
+            <input type="hidden" asp-for="Claims" id="claimsSelecionada" />
+            <div class="c-form__group col-8">
+                <label asp-for="Nome" class="c-form__label"></label>
+                <input asp-for="Nome" required class="c-form__input form-control" placeholder="Digite o nome do Perfil" />
+                <span asp-validation-for="Nome" class="form-text text-danger"></span>
+            </div>
+            <div class="c-form__group col-8">
+                <label asp-for="Descricao" class="c-form__label"></label>
+                <textarea asp-for="Descricao" class="c-form__input form-control" placeholder="Digite a Descrição do Perfil"></textarea>
+                <span asp-validation-for="Descricao" class="form-text text-danger"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="c-form__section">
+        <span class="c-form__section--label">Permissões do perfil</span>
+        <div class="row">
+            <div class="c-form__group col-12 c-form__treeview">
+                <div class="row w-75" style="gap: 10px">
+                    <label class="c-form__label">Categorias</label>
+                    <select class="c-form__input c-form__input--select"  id="categorias" onchange="exibirPermissoes()">
+                        <option selected disabled value="">Selecione ...</option>
+                        <option value="Todas">Todas as Categorias</option>
+                        @if (ViewBag.Categorias != null && ViewBag.Categorias is List<string>)
+                        {
+                            @foreach (var item in ViewBag.Categorias as List<string>)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="row">
+
+                    <div class="c-form__treeview--group" style="margin-top: 10rem">
+                        <label class="c-form__label c-form__check c-form__treeview--all">
+                            <input type="checkbox" name="" id="" /> Todas as Permissões
+                        </label>
+                    </div>
+                    @if (ViewBag.ClaimModulos != null && ViewBag.ClaimModulos is IList<Tuple<string, string, string, Claim>>)
+                    {
+                        var claims = ViewBag.ClaimModulos as IList<Tuple<string, string, string, Claim>>;
+                        @foreach (var modulo in claims.GroupBy(c => c.Item1))
+                        {
+                            <div class="c-form__treeview--group categorias" style="margin-top: 10rem; " id="@modulo.Key">
+                                <label class="c-form__label c-form__check c-form__treeview--parent">
+                                    <input type="checkbox" class="checkCategoria" name="" id="@string.Concat("check",modulo.Key)" /> @modulo.Key
+                                </label>
+                                <div class="c-form__treeview--group" style="margin-top:5rem; margin-left:4%">
+                                    @foreach (var paginas in modulo.GroupBy(c => c.Item2))
+                                    {
+                                        var nomePagina = paginas.First().Item3.Split("-")[0];
+                                        <label class="c-form__label c-form__check c-form__treeview--parent">
+                                            <input type="checkbox" name="" id="" /> @paginas.Key
+                                        </label>
+                                        <div class=" c-form__treeview--children">
+                                            @foreach (var pagina in paginas)
+                                            {
+                                                <label class="c-form__label c-form__check">
+                                                    <input class="valorClaim" type="checkbox" value="@pagina.Item3" name="" id="" style="margin-right:5rem" />@pagina.Item3
+                                                </label>
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="c-form__btn-group">
+        <input type="submit" value="Cadastrar Perfil" class="o-btn o-btn-default" id="btnSubmit">
+        <input type="button" value="Cancelar" class="o-btn o-btn-alt" onclick="voltarPaginaInicial()">
+    </div>
+
+
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/perfis.js"></script>
+    <script>
+        const url = "@Url.Action("Adicionar","Perfis")";
+        const modal = new bootstrap.Modal('#modalConfirmacao');
+        $("form").submit((e) => {
+            e.preventDefault();
+            if ($("form").valid()) {
+
+
+                $(".modal-body").html("<p class='lh-base'>Deseja confirmar o cadastro do novo perfil ?</p>")
+                $("#btnConfirmarModal").attr('onclick', 'adicionarPerfil()');
+                modal.show();
+                
+                
+
+            }
+        })
+
+        function adicionarPerfil() {
+            let claimsSelecionadas = [];
+
+            $('.valorClaim').each((i, element) => {
+                if ($(element).is(':checked')) {
+                    claimsSelecionadas.push($(element).val());
+                }
+            })
+
+            let data = {
+                Nome: $('#Nome').val(),
+                Descricao: $('#Descricao').val(),
+                Claims: claimsSelecionadas
+            };
+
+            $("#loadingDiv").show();
+            modal.hide();
+            $.ajax({
+                url: `${url}`,
+                type: 'POST',
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                contentType: "application/json; charset=utf-8",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", `${pegarToken()}`);
+                },
+                data: JSON.stringify(data),
+                async: false
+            }).done((resultado) => {
+
+                $("input[type=checkbox]").each((i, el) => {
+                    $(el).prop('checked', false);
+                })
+
+                $('#Nome').val('');
+                $('#Descricao').val('');
+
+                if (resultado !== undefined) {
+                    alertBootstrapp(resultado, 'success')
+                }
+                $('#btnSubmit').attr('disabled', false);
+                $("#loadingDiv").hide();
+
+            }).fail((jqXHR, textStatus, errorThrown) => {
+
+                if (jqXHR != undefined && jqXHR.responseJSON != undefined) {
+                    let mensagensErros = jqXHR.responseJSON;
+
+                    if (mensagensErros != undefined && Array.isArray(mensagensErros)) {
+                        mensagensErros.forEach(mensagem => {
+                            alertBootstrapp(mensagem, 'danger');
+                        })
+                    }
+
+                }
+                $('#btnSubmit').attr('disabled', false);
+                $("#loadingDiv").hide();
+
+            })
+        }
+
+
+        function paginaInicial() {
+            // window.location.href = '@Url.Action("Index","Perfis")';
+
+            $(".modal-body").html("<p class='lh-base'>Deseja sair do cadastro do perfil ?</p>")
+            $("#btnConfirmarModal").attr('onclick', 'voltarPaginaInicial()');
+            modal.show();
+
+        }
+
+        function voltarPaginaInicial() {
+            modal.hide();
+            window.location.href = '@Url.Action("Index","Perfis")';
+        }
+    </script>
+
+}

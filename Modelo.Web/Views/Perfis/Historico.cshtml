@@ -1,0 +1,23 @@
+﻿@using Modelo.Web.ViewModels;
+@model HistoricoViewModel
+@{
+    ViewData["Title"] = "Histório de Alterações";
+}
+
+<h1 class="o-title">
+    @ViewData["Title"]
+</h1>
+<partial name="~/Views/Shared/_Avisos.cshtml" />
+<div id="avisos"></div>
+<div class="c-tabledata">
+    <div class="c-tabledata__controllers">
+        <input type="search" id="pesquisaGrid" class="c-tabledata__controllers--search c-form__input c-form__input--search" placeholder="" />
+    </div>
+    @Html.AjaxGrid(Url.Action("Historico","Perfis", new { id = Model.Id }))
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

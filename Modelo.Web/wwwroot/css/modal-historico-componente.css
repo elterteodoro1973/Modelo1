@@ -1,0 +1,41 @@
+﻿.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 5px solid rgba(0,0,0,.2);
+    border-radius: 1.3rem;
+    outline: 0;
+}
+
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 20rem;
+}
+
+.modal-dialog {
+    max-width: 850px;
+    margin: 1.75rem auto;
+}
+
+.modal-title {
+    line-height: 1.5;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+    font-size: 22rem;
+    font-weight: bold;
+    margin-top: 20rem;
+}
+
+.table > :not(:last-child) > :last-child > * {
+    border-bottom-color: currentColor;
+    text-align: center;
+}
+
+table.dataTable.no-footer {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    border-collapse: collapse;
+}

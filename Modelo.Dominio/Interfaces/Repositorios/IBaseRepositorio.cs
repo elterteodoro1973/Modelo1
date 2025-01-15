@@ -1,0 +1,32 @@
+﻿using Modelo.Dominio.Entidades;
+using Modelo.Dominio.Interfaces.Servicos;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
+using System.Threading.Tasks;
+
+namespace Modelo.Dominio.Interfaces.Repositorios
+{
+    public interface IBaseRepositorio<T> where T: EntidadeBase
+    {
+        Task SalvarAlteracoes();
+        Task IniciarTransacao();
+        Task Commit();
+        Task Roolback();
+        Task Dispose();
+        Task Adicionar(T entidade);
+        Task Atualizar(T entidade);
+        Task Excluir(T entidadeBase);
+        Task<T> BuscarPorId(Guid Id, bool rastreioEntidade = true, bool incluirExcluidas = false);
+        Task<IList<T>> BuscarTodos(bool rastreioEntidade = true, bool incluirExcluidas = false);
+        Task<IList<Log>?> BuscarLogsPorIds(IList<Guid> ids);
+
+        Task<List<Log>?> BuscarLogsPorIdsDatas(IList<Guid> ids, DateTime? DataInicial, DateTime? DataFinal);
+
+        Task<List<Log>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal);
+        Task<IList<Log>?> BuscarLogsPorId(Guid id);
+        Task AdicionarLista(IList<T> entidades);
+        Task RemoverLista(IList<T> entidades);
+        Task AtualizarLista(IList<T> entidades);
+        Task<bool> VerficarSeIdEValido(Guid id);
+    }
+}

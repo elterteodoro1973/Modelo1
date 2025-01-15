@@ -1,0 +1,84 @@
+﻿@using Modelo.Web.ViewModels.Usuarios;
+@using NonFactors.Mvc.Grid;
+@model IList<UsuariosViewModel>
+
+@(
+Html
+        .Grid(Model)
+        .Build(columns =>
+        {
+            columns.Add(model => model.Nome).Titled("Nome").Filterable(true);
+            columns.Add(model => model.Email).Titled("E-mail");
+            columns.Add(model => model.CPF).Titled("CPF");
+            columns.Add(model => $"<div class='dropdown dropdown-actions'>"
++ $"<button class='btn btn-secondary dropdown-toggle btn-action' onclick='ativarbtn(this)' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-expanded='false'><span>Ações</span></button>"
++ $"<ul class='dropdown-menu' aria-labelledby='dropdownMenuButton'>"
++ "<li>"
+    + $"<a href='{Url.Action("Editar", "Usuarios", new { id = model.Id })}'><i class='icon-mode-edit' style='padding-right:4rem'></i> Editar</a>"
++ "</li>"
++ "<li>"
+    + $"<a href='{Url.Action("Permissoes", "Usuarios", new { id = model.Id })}'><i class='icon-shield' style='padding-right:4rem'></i> Permissões</a>"
++ "</li>"
++ "<li>"
+    + $"<a href='#' onclick='historico(`{model.Id}`)'><i class='icon-history' style='padding-right:4rem'></i>Histórico</a>"
++ "</li>"
++ "<li>"
+    + $"<a href='#' onclick='excluir(`{model.Id}`)'><i class='icon-delete' style='padding-right:4rem'></i> Excluir</a>"
++ "</li>"
++ $"</ul>"
++ $"</div>")
+
+    .Encoded(false);
+
+        })
+        .AppendCss("c-tabledata__table")
+        .Using(GridFilterMode.Excel)
+        .Sortable()
+        .UsingUrl(@Url.Action("Index"))
+        .RowAttributed(model => new { @class = "d-table-row" })
+        .Empty("Nenhum registro encontrado.")
+        .Pageable(pager =>
+        {
+            pager.PageSizes = new Dictionary<Int32, String> { { 0, "Todos" }, { 5, "5" }, { 10, "10" }, { 25, "25" }, { 50, "50" } };
+            pager.ShowPageSizes = true;
+            pager.PagesToDisplay = 5;
+            pager.CurrentPage = 1;
+            pager.RowsPerPage = 10;
+        })
+        )
+
+<link rel="stylesheet" href="~/css/modal-historico-componente.css">
+<link rel="stylesheet" href="~/css/data-table-historico.css">
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">*@
+
+<!-- Modal Historico-->
+<div id="modalHistorico" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="modalLongTitle">Histórico de Alterações</h1>
+                <button onclick="zerarTr()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table id="tableHistorico" class="table table-bordered table-condensed table-hover table-striped" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Data e Hora</th>
+                            <th>Usuário</th>
+                            <th>Campo</th>
+                            <th>Detalhes</th>
+                        </tr>
+                    </thead>
+                </table>
+
+            </div>
+            <br />
+            <div class="modal-footer">
+                <button onclick="zerarTr()" id="btnFechar" type="button" class="o-btn o-btn-alt is-valid " data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script></script>

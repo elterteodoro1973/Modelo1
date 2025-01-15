@@ -1,0 +1,103 @@
+﻿@{
+    TempData["Title"] = "Perfis";
+}
+
+
+
+<h1 style="margin-left: 8%;" class="o-title">
+    PERFIS
+</h1>
+
+<partial name="~/Views/Shared/_Avisos.cshtml" />
+<div id="avisos"></div>
+<div style="margin-left: 8%;" class="c-tabledata">
+    <div class="c-tabledata__controllers" style="margin-right: 8%;">
+
+        <input type="search" id="pesquisaGrid" class="c-tabledata__controllers--search c-form__input c-form__input--search" placeholder="Pesquisar por nome" />
+
+        <a href="@Url.Action("Adicionar","Perfis")" class="o-btn o-btn-default">Adicionar Perfil</a>
+    </div>
+
+
+    <div style="margin-right: 8%;">
+        @Html.AjaxGrid(Url.Action("Index"))
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+    @*<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">*@
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+
+
+
+    <script id="Historico-componente.js" src="~/js/historicoPerfil-componente.js"
+            data-urlPost="../Perfis/Historico"></script>
+
+
+
+    <script>
+        const urlExclusao = "@Html.Raw(Url.Action("Excluir","Perfis"))";
+        const modal = new bootstrap.Modal('#modalConfirmacao');
+        function excluir(id) {
+
+
+            $(".modal-body").html("<p class='lh-base'>Deseja excluir permanentemente o perfil ?</p>")
+            $("#btnConfirmarModal").attr('onclick', `excluirPerfil('${id}')`);
+            modal.show();
+
+
+        }
+
+        function excluirPerfil(id) {
+            let url = urlExclusao + `?id=${id}`;
+            $.ajax({
+                url: `${url}`,
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: `${pegarToken()}`,
+                },
+                async: false
+            }).done((resultado) => {
+                const grid = new MvcGrid(document.querySelector(".mvc-grid"));
+
+
+
+                grid.reload();
+                let html = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                                    ${resultado}
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                </div>`
+                $("#avisos").html(html);
+                modal.hide();
+            }).fail((jqXHR, textStatus, errorThrown) => {
+                console.log(jqXHR);
+                if (jqXHR != undefined && jqXHR.responseJSON != undefined && jqXHR.responseJSON != null) {
+                    $(jqXHR.responseJSON).each((i, e) => {
+                        let html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                                ${e}
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                        </div>`;
+                        $("#avisos").prepend(html);
+                    })
+                }
+                else if (jqXHR != undefined && jqXHR.responseText != undefined && jqXHR.responseText != null) {
+                    let html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                                                        ${jqXHR.responseText}
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                                </div>`;
+                    $("#avisos").html(html);
+                }
+                modal.hide();
+            });
+        }
+
+    </script>
+    }

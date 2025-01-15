@@ -1,0 +1,47 @@
+﻿@using Modelo.Web.ViewModels.Usuarios;
+@model CadastrarNovaSenhaViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<section class="c-login">
+    <article action="" class="c-login__box">
+        <header class="c-login__header">
+            <img src="~/imagens/main/logo-daee.png" alt="Logo do DAEE" />
+            <h2 class="c-login__title"> Sistema de Cobrança de Recursos Hídricos do Estado de São Paulo </h2>
+        </header>
+        <form asp-action="CadastrarNovaSenha" class="c-login__form">
+            <h3 class="c-login__form--title"> Cadastrar nova senha </h3>
+
+            <div class="c-login__form--fieldset">
+                <div asp-validation-summary="All" class="text-danger justify-content-start"></div>
+                <input type="hidden" asp-for="Token" />
+                <input type="hidden" asp-for="Email" />
+                <div class="c-form__group form-group">
+                    <label asp-for="Email" class="c-form__label form-label control-label"></label>
+                    <input type="text" disabled readony value="@(Model != null ? Model.Email : "")" class="c-form__input form-control">
+                    <span asp-validation-for="Email" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group form-group">
+                    <label asp-for="Senha" class="c-form__label form-label control-label"></label>
+                    <input asp-for="Senha" class="c-form__input form-control" placeholder="Digite seu e-mail">
+                    <span asp-validation-for="Senha" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group form-group">
+                    <label asp-for="ConfirmarSenha" class="c-form__label form-label control-label"></label>
+                    <input asp-for="ConfirmarSenha" class="c-form__input form-control" placeholder="Digite seu e-mail">
+                    <span asp-validation-for="ConfirmarSenha" class="form-text text-danger"></span>
+                </div>
+                <input type="submit" value="Salvar" class="o-btn o-btn--full o-btn-default">
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    }

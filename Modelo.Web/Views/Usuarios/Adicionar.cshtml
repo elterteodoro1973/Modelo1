@@ -1,0 +1,368 @@
+﻿@using Modelo.Web.ViewModels.Usuarios;
+@model CadastrarEditarUsuarioViewModel
+@{
+    TempData["Title"] = "Cadastrar Usuário";
+}
+
+<h1 class="o-title"> CADASTRAR USUÁRIO </h1>
+<partial name="~/Views/Shared/_Avisos.cshtml" />
+<form asp-action="Adicionar" method="post" class="c-form">
+    <div class="c-form__section">
+        <span class="c-form__section--label">Dados gerais</span>
+        <div class="row">
+            <div class="c-form__group col-8">
+                <label asp-for="Nome" class="c-form__label form-label control-label"></label>
+                <input asp-for="Nome" class="c-form__input form-control" required placeholder="Nome Completo">
+                <span asp-validation-for="Nome" class="form-text text-danger"></span>
+            </div>
+            <div class="c-form__group col-4">
+                <label asp-for="CPF" class="c-form__label form-label control-label"></label>
+                <input asp-for="CPF" data-mask="000.000.000-00" data-mask-reverse="true" data-rule-cpf="true" required class="c-form__input form-control maskCPF">
+                <span asp-validation-for="CPF" class="form-text text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="c-form__group col-8 ">
+                <div class="row m-0 w-100" style="gap:4rem">
+                    <label asp-for="Emails[0]" class="c-form__label form-label control-label">E-mail principal</label>
+                    <input asp-for="Emails[0]" posicao="0" type="email" data-msg-email="E-mail Inválido !" class="c-form__input form-control" required data-msg-required="E-mail principal é obrigatório !">
+                    <span asp-validation-for="Emails[0]" class="form-text text-danger"></span>
+                    <a href="#" id="addPrimeiroEmailSecundario" class="c-form__action repeater @(Model != null && Model.Emails != null && Model.Emails.Count > 1 ? "d-none": "")" onclick="adicionarEmail(this)">
+                        <i class="icon-add"></i> Adicionar outro E-mail
+                    </a>
+                </div>
+                @if (Model != null && Model.Emails != null && Model.Emails.Count > 0)
+                {
+                    for (int i = 1; i < Model.Emails.Count; i++)
+                    {
+                        <div class="row m-0 linhaEmail" style="gap:4rem; margin-top:24rem!important">
+                            <div class="d-flex justify-content-between">
+                                <label asp-for="Emails[i]" class="c-form__label form-label control-label">Email @(i + 1)</label>
+                                <a href="#" class="c-form__action repeater justify-content-end" onclick="removerEmail(this)" style="color:red!important">
+                                    <i class="icon-delete"></i> Remover
+                                </a>
+                            </div>
+
+                            <input asp-for="Emails[i]" posicao="@i" type="email" data-msg-email="E-mail Inválido !" class="c-form__input form-control">
+                            <span asp-validation-for="Emails[i]" class="form-text text-danger"></span>
+                            @if (i == Model.Telefone.Count - 1)
+                            {
+                                <a href="#" class="c-form__action repeater" onclick="adicionarEmail(this)">
+                                    <i class="icon-add"></i> Adicionar outro E-mail
+                                </a>
+                            }
+                        </div>
+                    }
+
+                }
+            </div>
+            <div class="c-form__group col-4">
+                <div class="row m-0" style="gap:4rem;">
+                    <label asp-for="Telefone[0]" class="c-form__label form-label control-label">Telefone Principal</label>
+                    <input asp-for="Telefone[0]" data-mask="(00)00009-0000" data-rule-telefone="true" posicao="0" class="c-form__input form-control maskTelefone" data-msg-required="Telefone principal obrigatório !" required>
+                    <span asp-validation-for="Telefone[0]" class="form-text text-danger"></span>
+                    <a href="#" id="addPrimeiroTelefoneSecundario" class="c-form__action repeater @(Model != null && Model.Telefone != null && Model.Telefone.Count > 1 ? "d-none": "")" onclick="adicionarTelefone(this)">
+                        <i class="icon-add"></i> Adicionar outro telefone
+                    </a>
+                </div>
+                @if (Model != null && Model.Telefone != null && Model.Telefone.Count > 0)
+                {
+                    for (int i = 1; i < Model.Telefone.Count; i++)
+                    {
+                        <div class="row m-0 linhaTelefones" style="gap:4rem; margin-top:24rem!important">
+                            <div class="d-flex justify-content-between">
+                                <label asp-for="Telefone[i]" class="c-form__label form-label control-label">Telefone @(i + 1)</label>
+                                <a href="#" class="c-form__action repeater justify-content-end" onclick="removerTelefone(this)" style="color:red!important">
+                                    <i class="icon-delete"></i> Remover
+                                </a>
+                            </div>
+
+                            <input asp-for="Telefone[i]" data-mask="(00)00009-0000" posicao="@i" class="c-form__input form-control" data-msg-required="Telefone obrigatório !">
+                            <span asp-validation-for="Telefone[i]" class="form-text text-danger"></span>
+                            @if (i == Model.Telefone.Count - 1)
+                            {
+                                <a href="#" class="c-form__action repeater" onclick="adicionarTelefone(this)">
+                                    <i class="icon-add"></i> Adicionar outro telefone
+                                </a>
+                            }
+                        </div>
+                    }
+
+                }
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div class="c-form__section">
+        <span class="c-form__section--label">Endereços do usuário</span>
+        <div class="row m-0 linhaEndereco">
+            <div class="row">
+                <div class="c-form__group col-4">
+                    <label asp-for="Enderecos[0].CEP" class="c-form__label form-label control-label"></label>
+                    <div class="row m-0">
+                        <div class="input-group c-form__input--attach">
+                            <input type="text" class="c-form__input form-control input-group-border-radius maskCEP" posicao="0"
+                                   data-mask="00000-000" asp-for="Enderecos[0].CEP" aria-label="Recipient's username" required aria-describedby="button-addon2">
+                            <button class=" o-btn o-btn-default btn input-group-border-radius" type="button" onclick="buscarCep(this)" id="button-addon2">Buscar CEP</button>
+                        </div>
+                    </div>
+                    <div class="row m-0">
+                        <span asp-validation-for="Enderecos[0].CEP" class="form-text text-danger"></span>
+                    </div>
+                </div>
+                <div class="c-form__group col-6">
+                    <label asp-for="Enderecos[0].Logradouro" class="c-form__label form-label control-label"></label>
+                    <input asp-for="Enderecos[0].Logradouro" required posicao="0" class="c-form__input form-control logradouro">
+                    <span asp-validation-for="Enderecos[0].Logradouro" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group col-2">
+                    <label asp-for="Enderecos[0].Numero" class="c-form__label form-label control-label"></label>
+                    <input asp-for="Enderecos[0].Numero" data-mask="999999" posicao="0" data-mask-reverse="true" class="c-form__input form-control numero">
+                    <span asp-validation-for="Enderecos[0].Numero" class="form-text text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="c-form__group col-4">
+                    <label asp-for="Enderecos[0].Complemento" class="c-form__label form-label control-label"></label>
+                    <input asp-for="Enderecos[0].Complemento" posicao="0" class="c-form__input form-control complemento">
+                    <span asp-validation-for="Enderecos[0].Complemento" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group col-4">
+                    <label asp-for="Enderecos[0].Estado" class="c-form__label">Estado</label>
+                    <select asp-for="Enderecos[0].Estado" posicao="0" required onchange="buscarMunicipios(this)" class="c-form__input c-form__input--select estado">
+                        <option value="" selected disabled>Selecione ...</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                    </select>
+                    <span asp-validation-for="Enderecos[0].Estado" class="form-text text-danger"></span>
+                </div>
+                <div class="c-form__group col-4">
+                    <label asp-for="Enderecos[0].Municipio" class="c-form__label">Município</label>
+                    <select asp-for="Enderecos[0].Municipio" required municipioSelecionado="@(Model != null && Model.Enderecos != null && Model.Enderecos.Count > 0 ? Model.Enderecos[0].Municipio : "")" posicao="0" disabled class="c-form__input c-form__input--select selectMunicipios selectMunicipio">
+                        <option value="" selected disabled>Selecione ...</option>
+                    </select>
+                    <span asp-validation-for="Enderecos[0].Municipio" class="form-text text-danger"></span>
+                    <div class="d-flex justify-content-between w-100">
+                        <a href="#" class="c-form__action repeater" onclick="adicionarEndereco(this)">
+                            <i class="icon-add"></i> Adicionar outro Endereço
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (Model != null && Model.Enderecos != null && Model.Enderecos.Count > 1)
+        {
+            for (int i = 1; i < Model.Enderecos.Count; i++)
+            {
+                <div class="row m-0 linhaEndereco">
+                    <div class="row">
+                        <div class="c-form__group col-4">
+                            <label asp-for="Enderecos[i].CEP" class="c-form__label form-label control-label"></label>
+                            <div class="row m-0">
+                                <div class="input-group c-form__input--attach">
+                                    <input type="text" class="c-form__input form-control input-group-border-radius" posicao="@i"
+                                           data-mask="00000-000" asp-for="Enderecos[i].CEP" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                    <button class=" o-btn o-btn-default btn input-group-border-radius" type="button" onclick="buscarCep(this)" id="button-addon2">Buscar CEP</button>
+                                </div>
+                            </div>
+                            <div class="row m-0">
+                                <span asp-validation-for="Enderecos[@i].CEP" class="form-text text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="c-form__group col-6">
+                            <label asp-for="Enderecos[i].Logradouro" class="c-form__label form-label control-label"></label>
+                            <input asp-for="Enderecos[i].Logradouro" posicao="@i" class="c-form__input form-control logradouro">
+                            <span asp-validation-for="Enderecos[i].Logradouro" class="form-text text-danger"></span>
+                        </div>
+                        <div class="c-form__group col-2">
+                            <label asp-for="Enderecos[i].Numero" class="c-form__label form-label control-label"></label>
+                            <input asp-for="Enderecos[i].Numero" data-mask="999999" posicao="@i" data-mask-reverse="true" class="c-form__input form-control numero">
+                            <span asp-validation-for="Enderecos[i].Numero" class="form-text text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="c-form__group col-4">
+                            <label asp-for="Enderecos[i].Complemento" class="c-form__label form-label control-label"></label>
+                            <input asp-for="Enderecos[i].Complemento" posicao="@i" class="c-form__input form-control complemento">
+                            <span asp-validation-for="Enderecos[i].Complemento" class="form-text text-danger"></span>
+                        </div>
+                        <div class="c-form__group col-4">
+                            <label asp-for="Enderecos[i].Estado" class="c-form__label">Estado</label>
+                            <select asp-for="Enderecos[i].Estado" posicao="@i" onchange="buscarMunicipios(this)" class="c-form__input c-form__input--select estado">
+                                <option value="" selected disabled>Selecione ...</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                            <span asp-validation-for="Enderecos[i].Estado" class="form-text text-danger"></span>
+                        </div>
+                        <div class="c-form__group col-4">
+                            <label asp-for="Enderecos[i].Municipio" class="c-form__label">Município</label>
+                            <select municipioSelecionado="@Model.Enderecos[i].Municipio" asp-for="Enderecos[i].Municipio" posicao="@i" disabled class="c-form__input c-form__input--select selectMunicipios selectMunicipio">
+                                <option value="" selected disabled>Selecione ...</option>
+                            </select>
+                            <span asp-validation-for="Enderecos[i].Municipio" class="form-text text-danger"></span>
+                            <div class="d-flex justify-content-between w-100">
+                                @if (i == Model.Enderecos.Count - 1)
+                                {
+                                    <a href="#" class="c-form__action repeater" onclick="adicionarEndereco(this)">
+                                        <i class="icon-add"></i> Adicionar outro Endereço
+                                    </a>
+                                }
+                                <a href="#" class="c-form__action repeater justify-content-end @(Model != null && Model.Enderecos != null && Model.Enderecos.Count > 1 ? "d-none" : "")" id="adicionarPrimeiroEnderecoSecundario" onclick="adicionarEndereco(this)" style="color:red!important">
+                                    <i class="icon-delete"></i> Remover
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="c-form__btn-group">
+        <input type="submit" value="Cadastrar Usuário" class="o-btn o-btn-default">
+        <input type="button" value="Cancelar" class="o-btn o-btn-alt" onclick="paginaInicial()">
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/usuario.js"></script>
+    @if (Model != null && Model.Enderecos != null && Model.Enderecos.Count > 0)
+    {
+        <script>
+            $(".estado").each((i, e) => {
+                let opcaoSelecionada = $(e).find("option:selected").val();
+                let municipioSelecionado = $(e).closest(".row").find(".selectMunicipios").attr("municipioselecionado");
+                console.log(municipioSelecionado);
+                let posicao = $(e).attr("posicao");
+                if (opcaoSelecionada != undefined && opcaoSelecionada != "") {
+                    let url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${opcaoSelecionada}/municipios`;
+                    $.get(url)
+                        .done((data) => {
+                            let opcaoSelecione = '<option value="" disabled>Selecione ...</option>';
+                            $(`.selectMunicipios[posicao=${posicao}]`).append(opcaoSelecione);
+                            $(data).each((i, e) => {
+                                if (e.nome.toUpperCase() == municipioSelecionado) {
+                                    let opcao = `<option value="${e.nome.toUpperCase()}" selected>${e.nome}</option>`;
+                                    $(`.selectMunicipios[posicao=${posicao}]`).append(opcao);
+                                }
+                                else {
+                                    let opcao = `<option value="${e.nome.toUpperCase()}">${e.nome}</option>`;
+                                    $(`.selectMunicipios[posicao=${posicao}]`).append(opcao);
+
+                                }
+                            })
+                            $(`.selectMunicipios[posicao=${posicao}]`).removeAttr("disabled");
+                        })
+                        .fail((jqXHR, textStatus) => {
+
+                        })
+                }
+            })
+
+        </script>
+
+    }
+
+    <script>
+
+        function paginaInicial() {
+            window.location.href = "@Url.Action("Index","Usuarios")";
+        }
+
+        const modal = new bootstrap.Modal('#modalConfirmacao');
+        $("form").submit((e) => {
+            e.preventDefault();
+            $(".checkboxCBH").each((i, element) => {
+
+                $(element).remove();
+
+            })
+            if ($("form").valid()) {
+                let indexInicio = 0;
+                $("input[name=CBHs][type=checkbox]").each((i, element) => {
+                    if ($(element).is(":checked")) {
+                        let valor = $(element).val();
+                        $("<input>").attr("type", "hidden").attr("name", `CBHs[${indexInicio}]`).addClass("checkboxCBH").val(valor).appendTo($("form"));
+                        indexInicio++;
+                    }
+                });
+
+                $(".modal-body").html("<p class='lh-base'>Deseja confirmar o cadastro do novo usuário?</p>")
+
+                modal.show();
+
+                $("#btnConfirmarModal").on("click", (element) => {
+                    modal.hide();
+                    e.currentTarget.submit();
+                })
+
+            }
+        });
+
+        $(document).ready(() => {
+            $("input[name=CBHs][type=checkbox]:checked").each((i, e) => {
+                let valor = $(e).val();
+                $("<input>").attr("type", "hidden").attr("name", `CBHs[${i}]`).addClass("checkboxCBH").val(valor).appendTo($("form"));
+            })
+        })
+    </script>
+    }
