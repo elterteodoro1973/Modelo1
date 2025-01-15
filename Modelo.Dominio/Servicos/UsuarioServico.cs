@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dominio.Servicos
 {
-    public class UsuarioServico : BaseServico<Usuario>, IUsuarioServico
+    public class UsuarioServico : BaseServico<Usuarios>, IUsuarioServico
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
@@ -46,7 +46,7 @@ namespace Modelo.Dominio.Servicos
             
         }
 
-        public async Task Adicionar(string caminho, Usuario usuario)
+        public async Task Adicionar(string caminho, Usuarios usuario)
         {
             await _ValidarInclusao(usuario);
 
@@ -88,7 +88,7 @@ namespace Modelo.Dominio.Servicos
             //}
         }
 
-        public async Task Editar(Usuario usuario)
+        public async Task Editar(Usuarios usuario)
         {
             await _ValidarEdicao(usuario);
 
@@ -160,7 +160,7 @@ namespace Modelo.Dominio.Servicos
                 await Login(usuarioDB);
             }
         }
-        private async Task Login(Usuario usuarioDB)
+        private async Task Login(Usuarios usuarioDB)
         {
             if (_httpContext.HttpContext.User.Identity != null && _httpContext.HttpContext.User.Identity.IsAuthenticated)
             {
@@ -181,9 +181,9 @@ namespace Modelo.Dominio.Servicos
             });
         }
 
-        private async Task _ValidarInclusao(Usuario usuario)
+        private async Task _ValidarInclusao(Usuarios usuario)
         {
-            if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuario>(new CadastrarEditarUsuarioValidacao(), usuario)) return;
+            //if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(), usuario)) return;
 
             if (_notificador.TemNotificacao()) return;
 
@@ -194,9 +194,9 @@ namespace Modelo.Dominio.Servicos
                 _notificador.Adicionar(new Notificacao("E-mail principal já cadastrado !"));
         }
 
-        private async Task _ValidarEdicao(Usuario usuario)
+        private async Task _ValidarEdicao(Usuarios usuario)
         {
-            if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuario>(new CadastrarEditarUsuarioValidacao(true), usuario)) return;
+            //if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(true), usuario)) return;
               
             if (_notificador.TemNotificacao()) return;
 
@@ -362,7 +362,7 @@ namespace Modelo.Dominio.Servicos
             if (_notificador.TemNotificacao()) return;
 
             var perfil = await _perfilRepositorio.BuscarPorId(perfilId);
-            Usuario? usuarioDB = await _usuarioRepositorio.BuscarPorId(usuarioId);
+            Usuarios? usuarioDB = await _usuarioRepositorio.BuscarPorId(usuarioId);
 
 
 

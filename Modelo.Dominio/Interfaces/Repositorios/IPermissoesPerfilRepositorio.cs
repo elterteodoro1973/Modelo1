@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dominio.Interfaces.Repositorios
 {
-    public interface IPermissoesPerfilRepositorio : IBaseRepositorio<PermissaoPerfil>
+    public interface IPermissoesPerfilRepositorio : IBaseRepositorio<PermissoesPerfis>
     {
-        Task<IList<PermissaoPerfil>?> BuscarPermissoesPorPerfil(Guid idPerfil);
+        Task<IList<PermissoesPerfis>?> BuscarPermissoesPorPerfil(Guid idPerfil);
 
         Task<IList<Guid>> BuscarIdsPermissoesPerfilPorPerfilId(Guid idPerfil);
 

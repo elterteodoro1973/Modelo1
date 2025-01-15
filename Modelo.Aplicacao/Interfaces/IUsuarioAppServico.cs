@@ -20,7 +20,7 @@ namespace Modelo.Aplicacao.Interfaces
         Task CadastrarPermissoesEPerfilUsuario(CadastrarPerfilUsuarioDTO dto);
         Task<CadastrarEditarUsuarioDTO?> BuscarUsuarioParaEditarPorId(Guid id);
         Task<UsuariosTelaInicialDTO?> BuscarUsuarioTelaCadastrarNovaSenha(Guid idUsuario);
-        Task<IList<LogDTO>?> BuscarLogUsuario(Guid idUsuario, string? filtro);
+        Task<IList<LogTransacoesDTO>?> BuscarLogUsuario(Guid idUsuario, string? filtro);
         Task Excluir(Guid id);
 
         Task ResetarSenha(string caminho, string email);

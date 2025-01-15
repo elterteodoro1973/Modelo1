@@ -15,7 +15,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             CreateMap<UsuariosTelaInicialDTO, UsuariosViewModel>();
             CreateMap<CadastrarEditarUsuarioDTO, CadastrarEditarUsuarioViewModel>();
             CreateMap<EnderecoCadastroUsuarioDTO, EnderecoViewModel>();
-            CreateMap<LogDTO, LogViewModel>()
+            CreateMap<LogTransacoesDTO, LogViewModel>()
                 .ForMember(c => c.DataFormatada, m =>
                 {
                     m.MapFrom(c => c.Data.ToString("dd/MM/yyyy HH:mm:ss"));
@@ -30,7 +30,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             CreateMap<PerfilDTO, PerfilViewModel>()
                 .ForMember(c => c.Claims, m => m.Ignore());
 
-            CreateMap<LogDTO, LogPerfilViewModel>()
+            CreateMap<LogTransacoesDTO, LogPerfilViewModel>()
              .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
              .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
              .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))

@@ -36,26 +36,26 @@ namespace Modelo.Aplicacao.Servicos
         }
         public async Task Adicionar(PerfilDTO dto)
         {
-            var perfil = _mapper.Map<Perfil>(dto);
+            var perfil = _mapper.Map<Perfis>(dto);
             perfil.Id = Guid.NewGuid();
-            perfil.PermissaoPerfis = new List<PermissaoPerfil>();
+            perfil.PermissoesPerfis = new List<PermissoesPerfis>();
             foreach (var item in dto.Claims)
             {
-                perfil.PermissaoPerfis.Add(new PermissaoPerfil
+                perfil.PermissoesPerfis.Add(new PermissoesPerfis
                 {
                     Id = Guid.NewGuid(),
                     PerfilId = perfil.Id,
-                    Tipo = item.Type,
-                    Valor = item.Value,
+                    //Tipo = item.Type,
+                    //Valor = item.Value,
                 });
             }
             await _perfilServico.Adicionar(perfil);
         }
 
 
-        public async Task<IList<LogDTO>> BuscarLogs(Guid id, string? filtro)
+        public async Task<IList<LogTransacoesDTO>> BuscarLogs(Guid id, string? filtro)
         {
-            var lista = new List<LogDTO>();
+            var lista = new List<LogTransacoesDTO>();
             var logs = await _logRepositorio.BuscarPorIdEntidade(id);
             var idsPerfis = await _permissoesPerfilRepositorio.BuscarIdsPermissoesPerfilPorPerfilId(id);
             var configuracaoJSON = new JsonSerializerOptions
@@ -66,25 +66,27 @@ namespace Modelo.Aplicacao.Servicos
             {
                 foreach (var log in logs.OrderBy(c => c.Data))
                 {
-                    var perfil = JsonSerializer.Deserialize<Perfil>(log.Dados, configuracaoJSON);
+                    var perfil = JsonSerializer.Deserialize<Perfis>(log.Dados, configuracaoJSON);
                     if (perfil != null)
                     {
                         if (log.Comando == "INSERT")
                         {
                             foreach (var propriedade in perfil.GetType().GetProperties())
                             {
-                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfil.Excluido) 
-                                    || propriedade.Name == nameof(Perfil.PermissaoPerfis))
+                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfis.Excluido) 
+                                    || propriedade.Name == nameof(Perfis.PermissoesPerfis))
                                     continue;
 
-                                lista.Add(new LogDTO { Data = log.Data, Tipo = "Inclusão", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
+                                lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
                             }
 
-                            if (perfil.PermissaoPerfis.Any())
+                            if (perfil.PermissoesPerfis.Any())
                             {
-                                foreach (var permissao in perfil.PermissaoPerfis)
+                                foreach (var permissao in perfil.PermissoesPerfis)
                                 {
-                                    lista.Add(new LogDTO { Data = log.Data, Tipo = "Inclusão", Campo = "Permissões", Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor), Usuario = log.Usuario.NomeCompleto });
+                                    lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = "Permissões", 
+                                        //Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor), 
+                                        Usuario = log.Usuario.NomeCompleto });
                                 }
                             }
 
@@ -95,12 +97,12 @@ namespace Modelo.Aplicacao.Servicos
                             {
                                 var valor = propriedade.GetValue(perfil).ToString();
 
-                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfil.Excluido) 
-                                     || propriedade.Name == nameof(Perfil.PermissaoPerfis))
+                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfis.Excluido) 
+                                     || propriedade.Name == nameof(Perfis.PermissoesPerfis))
                                     continue;
 
                                 if (lista.Where(c => c.Campo == propriedade.Name && c.Valor != valor && c.Data > lista.Max(c => c.Data)).Any())
-                                    lista.Add(new LogDTO { Data = log.Data, Tipo = log.Comando = "Alteração", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
+                                    lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = log.Comando = "Alteração", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
                             }
                         }
 
@@ -115,14 +117,14 @@ namespace Modelo.Aplicacao.Servicos
                 var logsPermissoes = await _permissoesPerfilRepositorio.BuscarLogsPorIdsPermissoes(idsPerfis);
                 foreach (var log in logsPermissoes.OrderBy(c => c.Data))
                 {
-                    var permissao = JsonSerializer.Deserialize<PermissaoPerfil>(log.Dados, configuracaoJSON);
-                    lista.Add(new LogDTO
+                    var permissao = JsonSerializer.Deserialize<PermissoesPerfis>(log.Dados, configuracaoJSON);
+                    lista.Add(new LogTransacoesDTO
                     {
                         Campo = "Permissões",
                         Data = log.Data,
                         Usuario = log.Usuario.NomeCompleto,
                         Tipo = log.Comando == "INSERT" ? "Inclusão" : log.Comando == "UPDATE" ? "Alteração" : "Exclusão",
-                        Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor)
+                        //Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor)
                     });
                 }
             }
@@ -150,37 +152,37 @@ namespace Modelo.Aplicacao.Servicos
             if (perfil == null) return null;
             var dto = _mapper.Map<PerfilDTO>(perfil);
             dto.Claims = new List<Claim>();
-            foreach (var item in perfil.PermissaoPerfis)
-            {
-                dto.Claims.Add(new Claim(item.Tipo, item.Valor));
-            }
+            //foreach (var item in perfil.PermissoesPerfis)
+            //{
+            //    dto.Claims.Add(new Claim(item.Tipo, item.Valor));
+            //}
             return dto;
         }
 
 
 
-        public async Task<IList<LogDTO>> BuscarLogPerfilPorId(Guid? idPerfil)
+        public async Task<IList<LogTransacoesDTO>> BuscarLogPerfilPorId(Guid? idPerfil)
         {
             if (!idPerfil.HasValue)
                 return null;
 
-            var logsFinalizades = _mapper.Map<IList<LogDTO>>(await _perfilRepositorio.BuscarTodosEntidadeId(idPerfil.Value));
+            var logsFinalizades = _mapper.Map<IList<LogTransacoesDTO>>(await _perfilRepositorio.BuscarTodosEntidadeId(idPerfil.Value));
 
             return logsFinalizades.OrderByDescending(c => Convert.ToDateTime(c.Data)).ToList();
         }
 
         public async Task Editar(PerfilDTO dto)
         {
-            var perfil = _mapper.Map<Perfil>(dto);
-            perfil.PermissaoPerfis = new List<PermissaoPerfil>();
+            var perfil = _mapper.Map<Perfis>(dto);
+            perfil.PermissoesPerfis = new List<PermissoesPerfis>();
             foreach (var item in dto.Claims)
             {
-                perfil.PermissaoPerfis.Add(new PermissaoPerfil
+                perfil.PermissoesPerfis.Add(new PermissoesPerfis
                 {
                     Id = Guid.NewGuid(),
                     PerfilId = perfil.Id,
-                    Tipo = item.Type,
-                    Valor = item.Value,
+                    //Tipo = item.Type,
+                    //Valor = item.Value,
                 });
             }
             await _perfilServico.Editar(perfil);

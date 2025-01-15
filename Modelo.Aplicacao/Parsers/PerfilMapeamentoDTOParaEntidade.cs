@@ -10,7 +10,7 @@ namespace Modelo.Aplicacao.Parsers
     {
         public PerfilMapeamentoDTOParaEntidade()
         {
-            CreateMap<CadastrarEditarUsuarioDTO, Usuario>()
+            CreateMap<CadastrarEditarUsuarioDTO, Usuarios>()
                 .ForMember(c => c.Id, m =>
                 {
                     m.MapFrom(c => c.Id.HasValue ? c.Id : Guid.NewGuid());
@@ -29,7 +29,7 @@ namespace Modelo.Aplicacao.Parsers
           
 
 
-            CreateMap<PerfilDTO, Perfil>()
+            CreateMap<PerfilDTO, Perfis>()
                 .ForMember(c => c.Id, m =>
                 {
                     m.PreCondition(c => c.Id.HasValue);
@@ -42,7 +42,7 @@ namespace Modelo.Aplicacao.Parsers
           
           
 
-            CreateMap<LogDTO, LogTransacoes>()
+            CreateMap<LogTransacoesDTO, LogTransacoes>()
             .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
             .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
             .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))

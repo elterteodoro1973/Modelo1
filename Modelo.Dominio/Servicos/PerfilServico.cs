@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dominio.Servicos
 {
-    public class PerfilServico : BaseServico<Perfil>,  IPerfilServico
+    public class PerfilServico : BaseServico<Perfis>,  IPerfilServico
     {
         private readonly INotificador _notificador;
         private readonly IPerfilRepositorio _perfilRepositorio;
@@ -24,7 +24,7 @@ namespace Modelo.Dominio.Servicos
             _permissoesPerfilRepositorio = permissoesPerfilRepositorio;
         }
 
-        public async Task Adicionar(Perfil perfil)
+        public async Task Adicionar(Perfis perfil)
         {
             await _ValidarInclusao(perfil);
 
@@ -44,7 +44,7 @@ namespace Modelo.Dominio.Servicos
             }
         }
 
-        public async Task Editar(Perfil perfil)
+        public async Task Editar(Perfis perfil)
         {
             await _ValidarEdicao(perfil);
 
@@ -52,8 +52,8 @@ namespace Modelo.Dominio.Servicos
 
             var permissoesDB = await _permissoesPerfilRepositorio.BuscarPermissoesPorPerfil(perfil.Id);
 
-            var permissoesAdd = perfil.PermissaoPerfis.ExceptBy(permissoesDB.Select(c => new { c.Tipo, c.Valor }), c => new { c.Tipo, c.Valor }).ToList();
-            var permissoesRemover = permissoesDB.ExceptBy(perfil.PermissaoPerfis.Select(c => new { c.Tipo, c.Valor }), c => new { c.Tipo, c.Valor }).ToList();
+            var permissoesAdd = perfil.PermissoesPerfis.ExceptBy(permissoesDB.Select(c => new { c.TipoAcaoId, c.TipoAcessoId }), c => new { c.TipoAcaoId, c.TipoAcessoId }).ToList();
+            var permissoesRemover = permissoesDB.ExceptBy(perfil.PermissoesPerfis.Select(c => new { c.TipoAcaoId, c.TipoAcessoId }), c => new { c.TipoAcaoId, c.TipoAcessoId }).ToList();
 
             await _perfilRepositorio.IniciarTransacao();
 
@@ -77,14 +77,14 @@ namespace Modelo.Dominio.Servicos
             }
         }
 
-        private async Task _ValidarInclusao(Perfil perfil)
+        private async Task _ValidarInclusao(Perfis perfil)
         {
-            if (ExecutarValidacao<AdicionarEditarPerfilValidacao, Perfil>(new AdicionarEditarPerfilValidacao(false), perfil)) return;
+            if (ExecutarValidacao<AdicionarEditarPerfilValidacao, Perfis>(new AdicionarEditarPerfilValidacao(false), perfil)) return;
         }
 
-        private async Task _ValidarEdicao(Perfil perfil)
+        private async Task _ValidarEdicao(Perfis perfil)
         {
-            if (ExecutarValidacao<AdicionarEditarPerfilValidacao, Perfil>(new AdicionarEditarPerfilValidacao(true), perfil)) return;
+            if (ExecutarValidacao<AdicionarEditarPerfilValidacao, Perfis>(new AdicionarEditarPerfilValidacao(true), perfil)) return;
 
             if (!await _perfilRepositorio.VerficarSeIdEValido(perfil.Id))
                 _notificador.Adicionar(new Notificacao("Identificador de Perfil inválido !"));

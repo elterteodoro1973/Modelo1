@@ -17,9 +17,9 @@ namespace Modelo.Aplicacao.Interfaces
         Task<IList<PerfilDTO?>> BuscarPerfis();
         Task<PerfilDTO> BuscarPerfilAdministrador();
 
-        Task<IList<LogDTO>> BuscarLogPerfilPorId(Guid? idPerfil);
+        Task<IList<LogTransacoesDTO>> BuscarLogPerfilPorId(Guid? idPerfil);
         Task Excluir(Guid id);
 
-        Task<IList<LogDTO>> BuscarLogs(Guid id, string? filtro);
+        Task<IList<LogTransacoesDTO>> BuscarLogs(Guid id, string? filtro);
     }
 }

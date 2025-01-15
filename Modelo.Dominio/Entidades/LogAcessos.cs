@@ -8,22 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Modelo.Dominio.Entidades
 {
-    public partial class LogTransacoes : EntidadeBase
+    public partial class LogAcessos : EntidadeBase
     {
         
-        public Guid EntidadeId { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime Data { get; set; }
         public Guid? UsuarioId { get; set; }
-        [Column(TypeName = "ntext")]
-        public string Dados { get; set; }
         [Required]
-        [StringLength(10)]
+        [StringLength(20)]
         [Unicode(false)]
         public string Comando { get; set; }
+        [StringLength(256)]
+        [Unicode(false)]
+        public string Entidades { get; set; }
+        
+        public bool? LogTransacoes { get; set; }
 
         [ForeignKey("UsuarioId")]
-        [InverseProperty("LogTransacoes")]
+        [InverseProperty("LogAcessos")]
         public virtual Usuarios Usuario { get; set; }
     }
 }

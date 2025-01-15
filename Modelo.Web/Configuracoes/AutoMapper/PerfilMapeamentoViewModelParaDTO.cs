@@ -15,7 +15,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             CreateMap<EnderecoViewModel, EnderecoCadastroUsuarioDTO>();
             CreateMap<CadastrarNovaSenhaViewModel, CadastrarNovaSenhaDTO>();
             
-            CreateMap<PerfilViewModel, PerfisDTO>()
+            CreateMap<PerfilViewModel, PerfilDTO>()
                 .ForMember(c => c.Id, m =>
                 {
                     m.PreCondition(c => c.Id.HasValue);
@@ -29,16 +29,13 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             CreateMap<CadastrarPerfilUsuarioViewModel, CadastrarPerfilUsuarioDTO>()
                 .ForMember(c => c.PerfilId, m => m.MapFrom(c => c.PerfilId))
                 .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))
-                .ForMember(c => c.CbhId, m => m.MapFrom(c => c.CbhId));
-            
-            
+                .ForMember(c => c.CbhId, m => m.MapFrom(c => c.CbhId)); 
 
-            CreateMap<LogPerfilViewModel, LogDTO>()
+            CreateMap<LogPerfilViewModel, LogTransacoesDTO>()
                .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
                .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
                .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))
                .ForMember(c => c.Dados, m => m.MapFrom(c => c.Dados));
-
         }
     }
 }

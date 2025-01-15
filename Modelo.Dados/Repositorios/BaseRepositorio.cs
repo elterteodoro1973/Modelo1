@@ -18,10 +18,10 @@ namespace Modelo.Dados.Repositorios
 {
     public abstract class BaseRepositorio<T> : IBaseRepositorio<T> where T : EntidadeBase
     {
-        private readonly DAEEContexto _contexto;
+        private readonly Contexto.DbContexto _contexto;
         private readonly ILogServico _logServico;
 
-        public BaseRepositorio(DAEEContexto contexto, ILogServico logServico)
+        public BaseRepositorio(Contexto.DbContexto contexto, ILogServico logServico)
         {
             _contexto = contexto;
             _logServico = logServico;
@@ -39,7 +39,7 @@ namespace Modelo.Dados.Repositorios
                 UsuarioId = _logServico.BuscarUsuarioId(),
                 Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
             };
-            await _contexto.Logs.AddAsync(log);
+            await _contexto.LogTransacoes.AddAsync(log);
 
         }
 
@@ -47,17 +47,17 @@ namespace Modelo.Dados.Repositorios
         public virtual async Task<T> BuscarPorId(Guid Id, bool rastreioEntidade = true, bool incluirExcluidas = false)
         {
             if (rastreioEntidade)
-                return await _contexto.Set<T>().Where(c => c.Id == Id && (incluirExcluidas ? c.Excluido : !c.Excluido)).FirstOrDefaultAsync();
+                return await _contexto.Set<T>().Where(c => c.Id == Id && (incluirExcluidas ? c.Excluido.Value : !c.Excluido.Value)).FirstOrDefaultAsync();
             else
-                return await _contexto.Set<T>().Where(c => c.Id == Id && (incluirExcluidas ? c.Excluido : !c.Excluido)).AsNoTracking().FirstOrDefaultAsync();
+                return await _contexto.Set<T>().Where(c => c.Id == Id && (incluirExcluidas ? c.Excluido.Value : !c.Excluido.Value)).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public virtual async Task<IList<T>> BuscarTodos(bool rastreioEntidade = true, bool incluirExcluidas = false)
         {
             if (rastreioEntidade)
-                return await _contexto.Set<T>().Where(c => (incluirExcluidas ? true : !c.Excluido)).ToListAsync();
+                return await _contexto.Set<T>().Where(c => (incluirExcluidas ? true : !c.Excluido.Value)).ToListAsync();
             else
-                return await _contexto.Set<T>().Where(c => (incluirExcluidas ? true : !c.Excluido)).AsNoTracking().ToListAsync();
+                return await _contexto.Set<T>().Where(c => (incluirExcluidas ? true : !c.Excluido.Value)).AsNoTracking().ToListAsync();
         }
 
         public virtual async Task Commit()
@@ -103,7 +103,7 @@ namespace Modelo.Dados.Repositorios
             //    UsuarioId = _logServico.BuscarUsuarioId(),
             //    Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
             //};
-            //await _contexto.Logs.AddAsync(log);
+            //await _contexto.LogTransacoes.AddAsync(log);
 
 
         }
@@ -121,7 +121,7 @@ namespace Modelo.Dados.Repositorios
                 UsuarioId = _logServico.BuscarUsuarioId(),
                 Dados = JsonSerializer.Serialize(entidadeBase, BuscarConfiguracaoJSON())
             };
-            await _contexto.Logs.AddAsync(log);
+            await _contexto.LogTransacoes.AddAsync(log);
         }
 
         public async Task AdicionarLista(IList<T> entidades)
@@ -141,7 +141,7 @@ namespace Modelo.Dados.Repositorios
             //    };
             //    logs.Add(log);
             //}
-            //await _contexto.Logs.AddRangeAsync(logs);
+            //await _contexto.LogTransacoes.AddRangeAsync(logs);
 
         }
 
@@ -167,11 +167,11 @@ namespace Modelo.Dados.Repositorios
                 logs.Add(log);
             }
             if (logs.Count > 0)
-                await _contexto.Logs.AddRangeAsync(logs);
+                await _contexto.LogTransacoes.AddRangeAsync(logs);
         }
 
         public async Task<bool> VerficarSeIdEValido(Guid id)
-        => await _contexto.Set<T>().Where(c => !c.Excluido && c.Id == id).AnyAsync();
+        => await _contexto.Set<T>().Where(c => !c.Excluido.Value && c.Id == id).AnyAsync();
 
         private JsonSerializerOptions BuscarConfiguracaoJSON() =>
              new JsonSerializerOptions
@@ -196,11 +196,11 @@ namespace Modelo.Dados.Repositorios
             //    };
             //    logs.Add(log);
             //}
-            //await _contexto.Logs.AddRangeAsync(logs);
+            //await _contexto.LogTransacoes.AddRangeAsync(logs);
         }
 
         public virtual async Task<IList<LogTransacoes>?> BuscarLogsPorIds(IList<Guid> ids)
-        => await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+        => await _contexto.LogTransacoes.Where(c => ids.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
 
 
@@ -208,44 +208,44 @@ namespace Modelo.Dados.Repositorios
         {
             if (DataInicial != null && DataFinal != null)
             {
-                return await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId) && (c.Data >= DataInicial.Value && c.Data <= DataFinal.Value)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => ids.Contains(c.EntidadeId) && (c.Data >= DataInicial.Value && c.Data <= DataFinal.Value)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else if (DataInicial != null && DataFinal == null)
             {
-                return await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId) && c.Data >= DataInicial.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => ids.Contains(c.EntidadeId) && c.Data >= DataInicial.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else if (DataInicial == null && DataFinal != null)
             {
-                return await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId) && c.Data <= DataFinal.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => ids.Contains(c.EntidadeId) && c.Data <= DataFinal.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else
             {
-                return await _contexto.Logs.Where(c => ids.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => ids.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
         }
 
 
 
         public virtual async Task<IList<LogTransacoes>?> BuscarLogsPorId(Guid id)
-        => await _contexto.Logs.Where(c => c.EntidadeId == id).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+        => await _contexto.LogTransacoes.Where(c => c.EntidadeId == id).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
         public async Task<List<LogTransacoes>?> BuscarLogsPorIdDatas(Guid id, DateTime? DataInicial, DateTime? DataFinal)
         {
             if (DataInicial != null && DataFinal != null)
             {
-                return await _contexto.Logs.Where(c => c.EntidadeId == id && (c.Data >= DataInicial.Value && c.Data <= DataFinal.Value)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => c.EntidadeId == id && (c.Data >= DataInicial.Value && c.Data <= DataFinal.Value)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else if (DataInicial != null && DataFinal == null)
             {
-                return await _contexto.Logs.Where(c => c.EntidadeId == id && c.Data >= DataInicial.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => c.EntidadeId == id && c.Data >= DataInicial.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else if (DataInicial == null && DataFinal != null)
             {
-                return await _contexto.Logs.Where(c => c.EntidadeId == id && c.Data <= DataFinal.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => c.EntidadeId == id && c.Data <= DataFinal.Value).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
             else
             {
-                return await _contexto.Logs.Where(c => c.EntidadeId == id).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+                return await _contexto.LogTransacoes.Where(c => c.EntidadeId == id).Include(c => c.Usuario).AsNoTracking().ToListAsync();
             }
         }
 

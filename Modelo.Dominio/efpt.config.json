@@ -1,0 +1,72 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "DbContexto",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Entidades",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Modelo.Dominio",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[LogAcessos]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LogTransacoes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Perfis]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PermissoesPerfis]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TipoAcao]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TipoAcesso]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Usuarios]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": true,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": true,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": true,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}

@@ -10,8 +10,8 @@ namespace Modelo.Dominio.Interfaces.Servicos
     public interface IUsuarioServico
     {
         Task Login(string caminho, string email, string senha);
-        Task Adicionar(string caminho, Usuario usuario);
-        Task Editar(Usuario usuario);
+        Task Adicionar(string caminho, Usuarios usuario);
+        Task Editar(Usuarios usuario);
         Task Excluir(Guid usuarioId);
         Task CadastrarSenha(Guid token, string email, string senha, string novaSenha);
         Task TrocarCBHUsuarioLogado(Guid usuarioId, Guid cbhIdSelecionada);

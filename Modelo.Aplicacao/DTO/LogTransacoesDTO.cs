@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Modelo.Aplicacao.DTO
 {
-    public class LogDTO
+    public class LogTransacoesDTO
     {
         public DateTime Data { get; set; }
         public string Usuario { get; set; } = null!;

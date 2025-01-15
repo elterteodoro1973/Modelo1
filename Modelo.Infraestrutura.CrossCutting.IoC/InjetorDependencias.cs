@@ -1,28 +1,17 @@
-﻿using Modelo.Aplicacao.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Modelo.Aplicacao.Interfaces;
 using Modelo.Aplicacao.Parsers;
 using Modelo.Aplicacao.Servicos;
-using Modelo.Dados.Contexto;
 using Modelo.Dados.Repositorios;
-using Modelo.Dados.Servicos;
-using Modelo.Dominio.Entidades;
 using Modelo.Dominio.Interfaces;
 using Modelo.Dominio.Interfaces.Repositorios;
 //using Modelo.Dominio.Interfaces.Repositorios.Modelo.Dominio.Interfaces.Repositorios;
 using Modelo.Dominio.Interfaces.Servicos;
 using Modelo.Dominio.Notificacoes;
 using Modelo.Dominio.Servicos;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Modelo.Infraestrutura.CrossCutting.IoC
 {
@@ -30,7 +19,7 @@ namespace Modelo.Infraestrutura.CrossCutting.IoC
     {
         public static void ConfigurarContextosEFCore(this IServiceCollection services, string conexao)
         {
-           services.AddDbContext<DAEEContexto>(o => o.UseSqlServer(conexao).EnableSensitiveDataLogging(), ServiceLifetime.Scoped);
+           services.AddDbContext<Dados.Contexto.DbContexto>(o => o.UseSqlServer(conexao).EnableSensitiveDataLogging(), ServiceLifetime.Scoped);
         }
 
         public static void ConfigurarAutoMapper(this IServiceCollection services)

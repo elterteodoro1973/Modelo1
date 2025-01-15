@@ -165,9 +165,7 @@ namespace Modelo.Web.Controllers
             var usuario = await _usuarioAppServico.BuscarUsuarioParaEditarPorId(id);
 
             if (usuario == null)
-                return BadRequest();
-
-            
+                return BadRequest();            
 
             var model = _mapper.Map<CadastrarEditarUsuarioViewModel>(usuario);
             return View(model);

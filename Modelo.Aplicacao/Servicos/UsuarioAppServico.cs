@@ -65,7 +65,7 @@ namespace Modelo.Aplicacao.Servicos
                 }
             }
 
-            var usuario = _mapper.Map<Usuario>(dto);
+            var usuario = _mapper.Map<Usuarios>(dto);
            
 
             await _usuarioServico.Adicionar(caminho, usuario);
@@ -141,7 +141,7 @@ namespace Modelo.Aplicacao.Servicos
                 }
             }
 
-            var usuario = _mapper.Map<Usuario>(dto);
+            var usuario = _mapper.Map<Usuarios>(dto);
             
            
             await _usuarioServico.Editar(usuario);
@@ -150,7 +150,7 @@ namespace Modelo.Aplicacao.Servicos
         public async Task Excluir(Guid id)
         => await _usuarioServico.Excluir(id);
 
-        public async Task<IList<LogDTO>?> BuscarLogUsuario(Guid usuarioId, string? filtro)
+        public async Task<IList<LogTransacoesDTO>?> BuscarLogUsuario(Guid usuarioId, string? filtro)
         {
             
             var todosPerfis = await _perfilRepositorio.BuscarTodos(false, true);            
@@ -162,24 +162,24 @@ namespace Modelo.Aplicacao.Servicos
             {
                 ReferenceHandler = ReferenceHandler.Preserve
             };
-            var listaLog = new List<LogDTO>();
+            var listaLog = new List<LogTransacoesDTO>();
 
 
             foreach (var log in historicoUsuario.OrderBy(c => c.Data))
             {
-                Usuario usuario = JsonSerializer.Deserialize<Usuario>(log.Dados, configuracaoJSON);
+                Usuarios usuario = JsonSerializer.Deserialize<Usuarios>(log.Dados, configuracaoJSON);
                 if (log.Comando == "INSERT")
                 {
                     foreach (var prop in usuario.GetType().GetProperties())
                     {
-                        if (prop.Name != nameof(Usuario.CPF) && prop.Name != nameof(Usuario.NomeCompleto) 
+                        if (prop.Name != nameof(Usuarios.CPF) && prop.Name != nameof(Usuarios.NomeCompleto) 
                             )
                             continue;
 
-                        if (prop.Name == nameof(Usuario.CPF) || prop.Name == nameof(Usuario.NomeCompleto))
+                        if (prop.Name == nameof(Usuarios.CPF) || prop.Name == nameof(Usuarios.NomeCompleto))
                         {
                             var valorAtual = prop.GetValue(usuario);
-                            listaLog.Add(new LogDTO
+                            listaLog.Add(new LogTransacoesDTO
                             {
                                 Campo = prop.Name,
                                 Data = log.Data,
@@ -197,16 +197,16 @@ namespace Modelo.Aplicacao.Servicos
                 {
                     foreach (var prop in usuario.GetType().GetProperties())
                     {
-                        if (prop.Name != nameof(Usuario.CPF) && prop.Name != nameof(Usuario.NomeCompleto) 
-                            && prop.Name != nameof(Usuario.Inativo) && prop.Name != nameof(Usuario.Administrador))
+                        if (prop.Name != nameof(Usuarios.CPF) && prop.Name != nameof(Usuarios.NomeCompleto) 
+                            && prop.Name != nameof(Usuarios.Inativo) && prop.Name != nameof(Usuarios.Administrador))
                             continue;
 
-                        if(prop.Name == nameof(Usuario.Inativo))
+                        if(prop.Name == nameof(Usuarios.Inativo))
                         {
                             var ultimoValorUsuarioAtivo = listaLog.Where(c => c.Campo == "Usuário Ativo ?").OrderByDescending(c => c.Data).FirstOrDefault();
                             if((ultimoValorUsuarioAtivo == null && usuario.Inativo) || (ultimoValorUsuarioAtivo != null && ultimoValorUsuarioAtivo.Valor != (usuario.Inativo ? "Falso" : "Verdadeiro")))
                             {
-                                listaLog.Add(new LogDTO
+                                listaLog.Add(new LogTransacoesDTO
                                 {
                                     Campo = "Usuário Ativo ?",
                                     Data = log.Data,
@@ -221,12 +221,12 @@ namespace Modelo.Aplicacao.Servicos
 
 
 
-                        if (prop.Name == nameof(Usuario.Administrador))
+                        if (prop.Name == nameof(Usuarios.Administrador))
                         {
                             var ultimoValorUsuarioAtivo = listaLog.Where(c => c.Campo == "Administrador DAEE").OrderByDescending(c => c.Data).FirstOrDefault();
                             if ((ultimoValorUsuarioAtivo == null && usuario.Administrador) || (ultimoValorUsuarioAtivo != null && ultimoValorUsuarioAtivo.Valor != (usuario.Administrador ? "Verdadeiro": "Falso" )))
                             {
-                                listaLog.Add(new LogDTO
+                                listaLog.Add(new LogTransacoesDTO
                                 {
                                     Campo = "Administrador DAEE",
                                     Data = log.Data,
@@ -243,7 +243,7 @@ namespace Modelo.Aplicacao.Servicos
                         var ultimoValor = listaLog.Where(c => c.Campo == prop.Name).OrderByDescending(c => c.Data).FirstOrDefault();
                         var valorAtual = prop.GetValue(usuario);
                         if (ultimoValor == null || ultimoValor.Valor != valorAtual.ToString())
-                            listaLog.Add(new LogDTO
+                            listaLog.Add(new LogTransacoesDTO
                             {
                                 Campo = prop.Name,
                                 Data = log.Data,
@@ -307,10 +307,10 @@ namespace Modelo.Aplicacao.Servicos
             string nomeNormalizado = "";
             switch (nomeCampo)
             {
-                case nameof(Usuario.NomeCompleto):
+                case nameof(Usuarios.NomeCompleto):
                     nomeNormalizado = "Nome";
                     break;
-                case nameof(Usuario.CPF):
+                case nameof(Usuarios.CPF):
                     nomeNormalizado = "CPF";
                     break;               
 

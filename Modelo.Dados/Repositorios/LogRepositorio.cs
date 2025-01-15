@@ -12,16 +12,16 @@ namespace Modelo.Dados.Repositorios
 {
     public class LogRepositorio : ILogRepositorio
     {
-        private readonly DAEEContexto _contexto;
+        private readonly Contexto.DbContexto _contexto;
 
-        public LogRepositorio(DAEEContexto contexto)
+        public LogRepositorio(Contexto.DbContexto contexto)
         {
             _contexto = contexto;
         }
         public async Task<IList<LogTransacoes>> BuscarPorIdEntidade(Guid idEntidade)
-        => await _contexto.Logs.Where(c => c.EntidadeId == idEntidade && c.Comando != "DELETE").Include(c => c.Usuario).AsNoTracking().ToListAsync();
+        => await _contexto.LogTransacoes.Where(c => c.EntidadeId == idEntidade && c.Comando != "DELETE").Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
         public async Task<IList<LogTransacoes>?> BuscarPorIdsEntidades(IList<Guid> idsEntidades, DateTime? dataInicio, DateTime? dataFim)
-        => await _contexto.Logs.Where(c => idsEntidades.Contains(c.EntidadeId) && (dataInicio.HasValue ? c.Data.Date >= dataInicio.Value.Date : true) && (dataFim.HasValue ? c.Data.Date <= dataFim.Value.Date : true)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+        => await _contexto.LogTransacoes.Where(c => idsEntidades.Contains(c.EntidadeId) && (dataInicio.HasValue ? c.Data.Date >= dataInicio.Value.Date : true) && (dataFim.HasValue ? c.Data.Date <= dataFim.Value.Date : true)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
     }
 }

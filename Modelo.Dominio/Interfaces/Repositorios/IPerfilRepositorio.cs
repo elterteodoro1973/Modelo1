@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dominio.Interfaces.Repositorios
 {
-    public interface IPerfilRepositorio : IBaseRepositorio<Perfil>
+    public interface IPerfilRepositorio : IBaseRepositorio<Perfis>
     {
-        Task<IList<Perfil>> BuscarPerfis();
-        Task<Perfil?> BuscarPorIdParaEdicao(Guid id);
-        Task<Perfil?> BuscarPerfilAdministrador();
+        Task<IList<Perfis>> BuscarPerfis();
+        Task<Perfis?> BuscarPorIdParaEdicao(Guid id);
+        Task<Perfis?> BuscarPerfilAdministrador();
         Task<IList<LogTransacoes>> BuscarTodosEntidadeId(Guid? idPerfil);
         //Task<bool> PerfilPossuiUsuariosAssociados(Guid id);
         Task<bool> VerificarSeIdEPerfilAdmDAEE(Guid id);

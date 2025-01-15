@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dados.Repositorios
 {
-    public class PermissoesPerfilRepositorio : BaseRepositorio<PermissaoPerfil>, IPermissoesPerfilRepositorio
+    public class PermissoesPerfilRepositorio : BaseRepositorio<PermissoesPerfis>, IPermissoesPerfilRepositorio
     {
-        private readonly DAEEContexto _contexto;
-        public PermissoesPerfilRepositorio(DAEEContexto contexto, ILogServico logServico) : base(contexto, logServico)
+        private readonly Contexto.DbContexto _contexto;
+        public PermissoesPerfilRepositorio(Contexto.DbContexto contexto, ILogServico logServico) : base(contexto, logServico)
         {
             _contexto = contexto;
         }
 
         public async Task<IList<Guid>> BuscarIdsPermissoesPerfilPorPerfilId(Guid idPerfil)
-        => await _contexto.PermissaoPerfils.IgnoreQueryFilters().Where(c => c.PerfilId == idPerfil).Select(c => c.Id).ToListAsync();
+        => await _contexto.PermissoesPerfis.IgnoreQueryFilters().Where(c => c.PerfilId == idPerfil).Select(c => c.Id).ToListAsync();
 
         public async Task<IList<LogTransacoes>> BuscarLogsPorIdsPermissoes(IList<Guid> idsPermissoes)
-        => await _contexto.Logs.Where(c => idsPermissoes.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
+        => await _contexto.LogTransacoes.Where(c => idsPermissoes.Contains(c.EntidadeId)).Include(c => c.Usuario).AsNoTracking().ToListAsync();
 
-        public async Task<IList<PermissaoPerfil>?> BuscarPermissoesPorPerfil(Guid idPerfil)
-        => await _contexto.PermissaoPerfils.Where(c => !c.Excluido && c.PerfilId == idPerfil). ToListAsync();
+        public async Task<IList<PermissoesPerfis>?> BuscarPermissoesPorPerfil(Guid idPerfil)
+        => await _contexto.PermissoesPerfis.Where(c => !c.Excluido.Value && c.PerfilId == idPerfil). ToListAsync();
     }
 }
