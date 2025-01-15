@@ -15,7 +15,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             CreateMap<EnderecoViewModel, EnderecoCadastroUsuarioDTO>();
             CreateMap<CadastrarNovaSenhaViewModel, CadastrarNovaSenhaDTO>();
             
-            CreateMap<PerfilViewModel, PerfilDTO>()
+            CreateMap<PerfilViewModel, PerfisDTO>()
                 .ForMember(c => c.Id, m =>
                 {
                     m.PreCondition(c => c.Id.HasValue);
