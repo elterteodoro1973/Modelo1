@@ -26,13 +26,13 @@ namespace Modelo.Aplicacao.Servicos
         private readonly IPermissoesPerfilRepositorio _permissoesPerfilRepositorio;
         private readonly ILogRepositorio _logRepositorio;
 
-        public PerfilAppServico(IMapper mapper, IPerfilServico perfilServico, IPerfilRepositorio perfilRepositorio, IPermissoesPerfilRepositorio permissoesPerfilRepositorio, ILogRepositorio logRepositorio)
+        public PerfilAppServico(IMapper mapper, IPerfilServico perfilServico, IPerfilRepositorio perfilRepositorio, IPermissoesPerfilRepositorio permissoesPerfilRepositorio,ILogRepositorio logRepositorio)
         {
             _mapper = mapper;
             _perfilServico = perfilServico;
             _perfilRepositorio = perfilRepositorio;
             _permissoesPerfilRepositorio = permissoesPerfilRepositorio;
-            _logRepositorio = logRepositorio;
+            _logRepositorio = logRepositorio;            
         }
         public async Task Adicionar(PerfilDTO dto)
         {
@@ -53,87 +53,87 @@ namespace Modelo.Aplicacao.Servicos
         }
 
 
-        public async Task<IList<LogTransacoesDTO>> BuscarLogs(Guid id, string? filtro)
+        public async Task<IList<LogTransacoes>> BuscarLogs(Guid id, string? filtro)
         {
-            var lista = new List<LogTransacoesDTO>();
+            var lista = new List<LogTransacoes>();
             var logs = await _logRepositorio.BuscarPorIdEntidade(id);
             var idsPerfis = await _permissoesPerfilRepositorio.BuscarIdsPermissoesPerfilPorPerfilId(id);
             var configuracaoJSON = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve
             };
-            if (logs.Any())
-            {
-                foreach (var log in logs.OrderBy(c => c.Data))
-                {
-                    var perfil = JsonSerializer.Deserialize<Perfis>(log.Dados, configuracaoJSON);
-                    if (perfil != null)
-                    {
-                        if (log.Comando == "INSERT")
-                        {
-                            foreach (var propriedade in perfil.GetType().GetProperties())
-                            {
-                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfis.Excluido) 
-                                    || propriedade.Name == nameof(Perfis.PermissoesPerfis))
-                                    continue;
-
-                                lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
-                            }
-
-                            if (perfil.PermissoesPerfis.Any())
-                            {
-                                foreach (var permissao in perfil.PermissoesPerfis)
-                                {
-                                    lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = "Permissões", 
-                                        //Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor), 
-                                        Usuario = log.Usuario.NomeCompleto });
-                                }
-                            }
-
-                        }
-                        else if (log.Comando == "UPDATE")
-                        {
-                            foreach (var propriedade in perfil.GetType().GetProperties())
-                            {
-                                var valor = propriedade.GetValue(perfil).ToString();
-
-                                if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfis.Excluido) 
-                                     || propriedade.Name == nameof(Perfis.PermissoesPerfis))
-                                    continue;
-
-                                if (lista.Where(c => c.Campo == propriedade.Name && c.Valor != valor && c.Data > lista.Max(c => c.Data)).Any())
-                                    lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = log.Comando = "Alteração", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
-                            }
-                        }
-
-                    }
 
 
-                }
-            }
+            //if (logs.Any())
+            //{
+            //    foreach (var log in logs.OrderBy(c => c.Data))
+            //    {
+            //        var perfil = JsonSerializer.Deserialize<Perfis>(log.Dados, configuracaoJSON);
+            //        if (perfil != null)
+            //        {
+            //            if (log.Comando == "INSERT")
+            //            {
+            //                foreach (var propriedade in perfil.GetType().GetProperties())
+            //                {
+            //                    if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfil.Excluido) ||
+            //                        propriedade.Name == nameof(Perfil.CBHUsuarios) || propriedade.Name == nameof(Perfil.PermissaoPerfis))
+            //                        continue;
 
-            if (idsPerfis.Any())
-            {
-                var logsPermissoes = await _permissoesPerfilRepositorio.BuscarLogsPorIdsPermissoes(idsPerfis);
-                foreach (var log in logsPermissoes.OrderBy(c => c.Data))
-                {
-                    var permissao = JsonSerializer.Deserialize<PermissoesPerfis>(log.Dados, configuracaoJSON);
-                    lista.Add(new LogTransacoesDTO
-                    {
-                        Campo = "Permissões",
-                        Data = log.Data,
-                        Usuario = log.Usuario.NomeCompleto,
-                        Tipo = log.Comando == "INSERT" ? "Inclusão" : log.Comando == "UPDATE" ? "Alteração" : "Exclusão",
-                        //Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor)
-                    });
-                }
-            }
+            //                    lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
+            //                }
+
+            //                if (perfil.PermissoesPerfis.Any())
+            //                {
+            //                    foreach (var permissao in perfil.PermissoesPerfis)
+            //                    {
+            //                        lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = "Inclusão", Campo = "Permissões", Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor), Usuario = log.Usuario.NomeCompleto });
+            //                    }
+            //                }
+
+            //            }
+            //            else if (log.Comando == "UPDATE")
+            //            {
+            //                foreach (var propriedade in perfil.GetType().GetProperties())
+            //                {
+            //                    var valor = propriedade.GetValue(perfil).ToString();
+
+            //                    if (propriedade.Name == nameof(EntidadeBase.Id) || propriedade.Name == nameof(EntidadeBase.Excluido) || propriedade.Name == nameof(Perfil.Excluido) ||
+            //                         propriedade.Name == nameof(Perfil.CBHUsuarios) || propriedade.Name == nameof(Perfil.PermissaoPerfis))
+            //                        continue;
+
+            //                    if (lista.Where(c => c.Campo == propriedade.Name && c.Valor != valor && c.Data > lista.Max(c => c.Data)).Any())
+            //                        lista.Add(new LogTransacoesDTO { Data = log.Data, Tipo = log.Comando = "Alteração", Campo = propriedade.Name, Valor = propriedade.GetValue(perfil).ToString(), Usuario = log.Usuario.NomeCompleto });
+            //                }
+            //            }
+
+            //        }
 
 
-            if (!string.IsNullOrEmpty(filtro) && !string.IsNullOrWhiteSpace(filtro))
-            {
-                lista = lista.Where(c => (c.Data.ToString().Contains(filtro) || c.Usuario.Contains(filtro) || c.Campo.Contains(filtro) || c.Tipo.Contains(filtro) || c.Valor.Contains(filtro))).ToList();
-            }
+            //    }
+            //}
+
+            //if (idsPerfis.Any())
+            //{
+            //    var logsPermissoes = await _permissoesPerfilRepositorio.BuscarLogsPorIdsPermissoes(idsPerfis);
+            //    foreach (var log in logsPermissoes.OrderBy(c => c.Data))
+            //    {
+            //        var permissao = JsonSerializer.Deserialize<PermissaoPerfil>(log.Dados, configuracaoJSON);
+            //        lista.Add(new LogDTO
+            //        {
+            //            Campo = "Permissões",
+            //            Data = log.Data,
+            //            Usuario = log.Usuario.NomeCompleto,
+            //            Tipo = log.Comando == "INSERT" ? "Inclusão" : log.Comando == "UPDATE" ? "Alteração" : "Exclusão",
+            //            Valor = string.Concat(permissao.Tipo, " - ", permissao.Valor)
+            //        });
+            //    }
+            //}
+
+
+            //if (!string.IsNullOrEmpty(filtro) && !string.IsNullOrWhiteSpace(filtro))
+            //{
+            //    lista = lista.Where(c => (c.Data.ToString().Contains(filtro) || c.Usuario.Contains(filtro) || c.Campo.Contains(filtro) || c.Tipo.Contains(filtro) || c.Valor.Contains(filtro))).ToList();
+            //}
 
             return lista.OrderBy(c => c.Data).ToList();
         }
@@ -193,4 +193,5 @@ namespace Modelo.Aplicacao.Servicos
             await _perfilServico.Excluir(id);
         }
     }
+
 }

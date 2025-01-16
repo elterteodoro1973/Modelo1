@@ -28,18 +28,12 @@ namespace Modelo.Aplicacao.Servicos
         private readonly IMapper _mapper;
        
         private readonly IPerfilRepositorio _perfilRepositorio;
-        public UsuarioAppServico(IMapper mapper, 
-            INotificador notificador, 
-            IUsuarioRepositorio usuarioRepositorio, 
-            IUsuarioServico usuarioServico,
-
-            IPerfilRepositorio perfilRepositorio)
+        public UsuarioAppServico(IMapper mapper,INotificador notificador,IUsuarioRepositorio usuarioRepositorio,IUsuarioServico usuarioServico,IPerfilRepositorio perfilRepositorio)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _mapper = mapper;
             _notificador = notificador;
             _usuarioServico = usuarioServico;
-
             _perfilRepositorio = perfilRepositorio;
         }
 
@@ -86,7 +80,6 @@ namespace Modelo.Aplicacao.Servicos
         public async Task Login(string caminho, string email, string senha)
         => await _usuarioServico.Login(caminho, email, senha);
 
-
         public async Task Logout()
         {
             _usuarioServico.Logout();
@@ -105,7 +98,6 @@ namespace Modelo.Aplicacao.Servicos
         {
             await _usuarioServico.CadastrarSenha(dto.Token, dto.Email, dto.Senha, dto.ConfirmarSenha);
         }
-
         public async Task<CadastrarEditarUsuarioDTO?> BuscarUsuarioParaEditarPorId(Guid id)
         {
             var usuario = await _usuarioRepositorio.BuscarUsuarioPorIdParaEdicaoSemRastreio(id);
@@ -146,7 +138,6 @@ namespace Modelo.Aplicacao.Servicos
            
             await _usuarioServico.Editar(usuario);
         }
-
         public async Task Excluir(Guid id)
         => await _usuarioServico.Excluir(id);
 
@@ -223,12 +214,12 @@ namespace Modelo.Aplicacao.Servicos
 
                         if (prop.Name == nameof(Usuarios.Administrador))
                         {
-                            var ultimoValorUsuarioAtivo = listaLog.Where(c => c.Campo == "Administrador DAEE").OrderByDescending(c => c.Data).FirstOrDefault();
+                            var ultimoValorUsuarioAtivo = listaLog.Where(c => c.Campo == "Administrador").OrderByDescending(c => c.Data).FirstOrDefault();
                             if ((ultimoValorUsuarioAtivo == null && usuario.Administrador) || (ultimoValorUsuarioAtivo != null && ultimoValorUsuarioAtivo.Valor != (usuario.Administrador ? "Verdadeiro": "Falso" )))
                             {
                                 listaLog.Add(new LogTransacoesDTO
                                 {
-                                    Campo = "Administrador DAEE",
+                                    Campo = "Administrador",
                                     Data = log.Data,
                                     EntidadeId = log.EntidadeId,
                                     Tipo = "Alteração",
@@ -293,8 +284,6 @@ namespace Modelo.Aplicacao.Servicos
         //public async Task<PerfilEPermissoesCBHUsuarioDTO?> BuscarPermissoesUsuarioCBHPorId(Guid cbhId, Guid usuarioId)
         //{
 
-            
-
         //    var dto = _mapper.Map<PerfilEPermissoesCBHUsuarioDTO>(cbhUsuario);
 
         //    dto.Permissoes = new List<Claim>();
@@ -325,8 +314,7 @@ namespace Modelo.Aplicacao.Servicos
         }
 
         public async Task CadastrarPermissoesEPerfilUsuario(CadastrarPerfilUsuarioDTO dto)
-        {
-            
+        {            
             await _usuarioServico.CadastrarPerfilPermissao(dto.UsuarioId, dto.CbhId, dto.PerfilId);
         }
 

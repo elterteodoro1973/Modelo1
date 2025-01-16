@@ -227,7 +227,7 @@
 
             let nomePerfilSelecionado = $('#perfil option:selected').html().toUpperCase().trim();
 
-            if (nomePerfilSelecionado === 'ADMINISTRADOR DAEE') {
+            if (nomePerfilSelecionado === 'ADMINISTRADOR') {
                 $('.valorClaim').each((i, e) => {
                     $(e).prop('checked', false);
                 });
@@ -322,7 +322,7 @@
                 $(e).prop('checked', false);
             })
 
-            if (nomePerfilSelecionado === 'ADMINISTRADOR DAEE'){
+            if (nomePerfilSelecionado === 'ADMINISTRADOR'){
                 $('#permissoes').addClass('d-none');
                 $('#cbhUsuariocol').addClass('d-none');
                 $('#cbhUsuario').val('@Html.Raw(Guid.Empty)');

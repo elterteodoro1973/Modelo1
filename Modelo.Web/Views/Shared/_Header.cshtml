@@ -1,0 +1,38 @@
+﻿@using Modelo.Web.Configuracoes.Cookie;
+@using Microsoft.AspNetCore.Http
+@using System.Text.Json;
+@{
+    
+    // var possuiListaCBH = !string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("CBHs"));
+    // var CBHSelecionadaId = !string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("CBHSelecionadaId")) ? HttpContextAccessor.HttpContext.Session.GetString("CBHSelecionadaId") : "";
+}
+<header class="c-header">
+    <h1 class="c-header--logo">
+        <a href="@Url.Action("Index","Home")" class="c-header--logo__link">
+            <div class="c-header--logo__img">
+                <img src="~/imagens/main/logo-daee-white.png" alt="Logo do DAEE" />
+            </div>
+            <span class="c-header--logo__title">DAEE - Sistema de cobranças de Recursos Hídricos</span>
+        </a>
+    </h1>
+    <div class="c-header--links">
+        <a href="#" class="c-header--links__link">
+            <span class="c-header--links__link-label">Ajuda</span>
+            <i class="icon-help"></i>
+        </a>
+        <div class="c-header--links__drop">
+            <span class="c-header--links__drop-name">@(string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("NomeUsuario")) ? "" : HttpContextAccessor.HttpContext.Session.GetString("NomeUsuario"))</span>
+            <div class="c-header--links__drop-btn o-dropdown">
+                <a href="#" class="c-header--links__drop-link">
+                    <span class="c-header--links__drop-link_label">@(string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("CBHSelecionada")) ? "" : HttpContextAccessor.HttpContext.Session.GetString("CBHSelecionada"))</span>
+                    <i class="icon-arrow-drop-down"></i>
+                </a>
+               
+            </div>
+        </div>
+        <a href="@Url.Action("Logout","Usuarios")" class="c-header--links__link">
+            <span class="c-header--links__link-label">Sair</span>
+            <i class="icon-logout"></i>
+        </a>
+    </div>
+</header>

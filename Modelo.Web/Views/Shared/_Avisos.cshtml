@@ -1,0 +1,29 @@
+﻿<div id="avisos">
+    @if (ViewBag.Sucesso != null && ViewBag.Sucesso is string)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.Sucesso
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.ListaErros != null && ViewBag.ListaErros is List<string>)
+    {
+        foreach (var item in ViewBag.ListaErros as List<string>)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @item
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    }
+
+    @if(ViewBag.Erro != null && ViewBag.Erro is string)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.Erro
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+</div>
+

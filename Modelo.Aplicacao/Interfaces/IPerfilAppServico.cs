@@ -20,6 +20,6 @@ namespace Modelo.Aplicacao.Interfaces
         Task<IList<LogTransacoesDTO>> BuscarLogPerfilPorId(Guid? idPerfil);
         Task Excluir(Guid id);
 
-        Task<IList<LogTransacoesDTO>> BuscarLogs(Guid id, string? filtro);
+        //Task<IList<LogTransacoesDTO>> BuscarLogs(Guid id, string? filtro);
     }
 }

@@ -6,6 +6,7 @@ using Modelo.Aplicacao.Interfaces;
 using Modelo.Aplicacao.Parsers;
 using Modelo.Aplicacao.Servicos;
 using Modelo.Dados.Repositorios;
+using Modelo.Dados.Servicos;
 using Modelo.Dominio.Interfaces;
 using Modelo.Dominio.Interfaces.Repositorios;
 //using Modelo.Dominio.Interfaces.Repositorios.Modelo.Dominio.Interfaces.Repositorios;
@@ -31,21 +32,23 @@ namespace Modelo.Infraestrutura.CrossCutting.IoC
         {
             ////Repositorios
             services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();            
-            services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();            
-            services.AddScoped<IPermissoesPerfilRepositorio, PermissoesPerfilRepositorio>();
+            services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();           
+            services.AddScoped<IPermissoesPerfilRepositorio, PermissoesPerfilRepositorio>();           
+            services.AddScoped<ILogRepositorio, LogRepositorio>();
 
-            ////Servicos de Dominio                     
-            services.AddScoped<IPerfilServico, PerfilServico>();
+            ////Servicos de Dominio           
+            services.AddScoped<IUsuarioServico, UsuarioServico>();           
+            services.AddScoped<IPerfilServico, PerfilServico>(); 
 
-            ////Servicos de Aplicacao                      
+            ////Servicos de Aplicacao
+            services.AddScoped<IUsuarioAppServico, UsuarioAppServico>();           
             services.AddScoped<IPerfilAppServico, PerfilAppServico>();
-           
+
             //Outros Servicos
             services.AddScoped<INotificador, Notificador>();
             services.AddScoped<ILogServico, LogServico>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddScoped<IEmailServico, EmailServico>();
-            
+            services.AddScoped<IEmailServico, EmailServico>();
         }
 
         public static void ConfigurarMensagensMVC(this IServiceCollection services)

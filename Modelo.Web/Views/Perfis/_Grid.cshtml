@@ -12,16 +12,16 @@ Html
             columns.Add(model => $"<div class='dropdown dropdown-actions'>"
             + $"<button class='btn btn-secondary dropdown-toggle btn-action' onclick='ativarbtn(this)' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-expanded='false'><span>Ações</span></button>"
             + $"<ul class='dropdown-menu' aria-labelledby='dropdownMenuButton'>"
-            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR DAEE") || User.HasClaim("Perfis", "Editar")) ? "<li>"
+            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR") || User.HasClaim("Perfis", "Editar")) ? "<li>"
                 + $"<a href='{Url.Action("Editar", "Perfis", new { id = model.Id })}'><i class='icon-mode-edit' style='padding-right:4rem'></i> Editar</a>"
             + "</li>" : "")
-            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR DAEE") || User.HasClaim("Perfis", "Historico")) ? "<li>"
+            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR") || User.HasClaim("Perfis", "Historico")) ? "<li>"
                 @* + $"<a href='{Url.Action("Historico", "Perfis", new { id = model.Id })}'><i class='icon-history' style='padding-right:4rem'></i>Histórico</a>" *@
 
                + $"<a id='Historicos' href='#' onclick='historicoPerfil(`{model.Id}`)'><i class='icon-history' data-bs-toggle='modal' data-bs-target='#modalHistorico' style='padding-right:4rem'></i>Histórico</a>"
                 
             + "</li>" : "")
-            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR DAEE") || User.HasClaim("Perfis", "Excluir")) ? "<li>"
+            + (User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("ADMINISTRADOR") || User.HasClaim("Perfis", "Excluir")) ? "<li>"
                 + $"<a href='#' onclick='excluir(`{model.Id}`)'><i class='icon-delete' style='padding-right:4rem'></i> Excluir</a>"
             + "</li>" : "")
             + $"</ul>"

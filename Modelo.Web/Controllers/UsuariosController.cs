@@ -26,13 +26,10 @@ namespace Modelo.Web.Controllers
 
         public UsuariosController(IUsuarioAppServico usuarioAppServico, 
             IMapper mapper, 
-            INotificador notificador,
-           
+            INotificador notificador,           
             ILogServico logServico, 
-            IPerfilAppServico perfilAppServico, 
-            
-            IWebHostEnvironment env
-            ) : base(notificador, logServico)
+            IPerfilAppServico perfilAppServico,
+            IWebHostEnvironment env ) : base(notificador, logServico)
         {
             _usuarioAppServico = usuarioAppServico;
             _notificador = notificador;

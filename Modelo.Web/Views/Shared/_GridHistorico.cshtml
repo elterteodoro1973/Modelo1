@@ -1,0 +1,32 @@
+﻿@using Modelo.Web.ViewModels.Usuarios;
+@using NonFactors.Mvc.Grid;
+@using Modelo.Web.ViewModels;
+@model HistoricoViewModel
+
+@(
+Html
+        .Grid(Model.Logs)
+        .Build(columns =>
+        {
+            columns.Add(model => model.Data).Titled("Data").Filterable(true);
+            columns.Add(model => model.Usuario).Titled("Usuário");
+            columns.Add(model => model.Tipo).Titled("Tipo de Operação");
+            columns.Add(model => model.Campo).Titled("Campo");
+            columns.Add(model => model.Valor).Titled("Valor");
+
+        })
+        .AppendCss("c-tabledata__table")
+        .Using(GridFilterMode.Excel)
+        .Sortable()
+        .UsingUrl(Model.UrlConsulta)
+        .RowAttributed(model => new { @class = "d-table-row" })
+        .Empty("Nenhum registro encontrado.")
+        .Pageable(pager =>
+        {
+            pager.PageSizes = new Dictionary<Int32, String> { { 0, "Todos" }, { 5, "5" }, { 10, "10" }, { 25, "25" }, { 50, "50" } };
+            pager.ShowPageSizes = true;
+            pager.PagesToDisplay = 5;
+            pager.CurrentPage = 1;
+            pager.RowsPerPage = 10;
+        })
+        )

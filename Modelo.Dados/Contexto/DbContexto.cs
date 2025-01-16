@@ -7,12 +7,15 @@ namespace Modelo.Dados.Contexto
     public class DbContexto : DbContext
     {
         private readonly ILogServico _logServico;
-        public DbContexto(DbContextOptions<DbContexto> options, ILogServico logServico) : base(options)
+        //public DbContexto(DbContextOptions<DbContexto> options, ILogServico logServico) : base(options)
+        //{
+        //    _logServico = logServico;
+        //}
+
+        public DbContexto(DbContextOptions<DbContexto> options) : base(options)
         {
-            _logServico = logServico;
+            
         }
-
-
 
         public virtual DbSet<LogAcessos> LogAcessos { get; set; }
         public virtual DbSet<LogTransacoes> LogTransacoes { get; set; }
@@ -22,14 +25,14 @@ namespace Modelo.Dados.Contexto
         public virtual DbSet<TipoAcesso> TipoAcesso { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //                optionsBuilder.UseSqlServer("Data Source=localhost\\SQL2019;Initial Catalog=Modelo;User ID=sa;Password=1478;Encrypt=False", x => x.UseHierarchyId());
-            }
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        //        //                optionsBuilder.UseSqlServer("Data Source=localhost\\SQL2019;Initial Catalog=Modelo;User ID=sa;Password=1478;Encrypt=False", x => x.UseHierarchyId());
+        //    }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,94 +119,92 @@ namespace Modelo.Dados.Contexto
         //    base.OnModelCreating(builder);
         //}
 
-        public override int SaveChanges()
-        {
+        //public override int SaveChanges()
+        //{
 
-             SalvarLog().ConfigureAwait(false).GetAwaiter().GetResult();
-
-
-            foreach (var item in ChangeTracker.Entries()
-               .Where(e => e.State == EntityState.Deleted &&
-               e.Metadata.GetProperties().Any(x => x.Name == "Excluido")))
-            {
-                item.State = EntityState.Unchanged;
-                item.CurrentValues["Excluido"] = true;
-            }
-            return base.SaveChanges();
-
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-
-            await SalvarLog();
+        //     SalvarLog().ConfigureAwait(false).GetAwaiter().GetResult();
 
 
+        //    foreach (var item in ChangeTracker.Entries()
+        //       .Where(e => e.State == EntityState.Deleted &&
+        //       e.Metadata.GetProperties().Any(x => x.Name == "Excluido")))
+        //    {
+        //        item.State = EntityState.Unchanged;
+        //        item.CurrentValues["Excluido"] = true;
+        //    }
+        //    return base.SaveChanges();
 
-            foreach (var item in ChangeTracker.Entries()
-              .Where(e => e.State == EntityState.Deleted &&
-              e.Metadata.GetProperties().Any(x => x.Name == "Excluido")))
-            {
-                item.State = EntityState.Unchanged;
-                item.CurrentValues["Excluido"] = true;
-            }
+        //}
+        //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        //{
+
+        //    await SalvarLog();
 
 
-            return await base.SaveChangesAsync(cancellationToken);
-        }
+
+        //    foreach (var item in ChangeTracker.Entries()
+        //      .Where(e => e.State == EntityState.Deleted &&
+        //      e.Metadata.GetProperties().Any(x => x.Name == "Excluido")))
+        //    {
+        //        item.State = EntityState.Unchanged;
+        //        item.CurrentValues["Excluido"] = true;
+        //    }
 
 
-        private async Task SalvarLog()
-        {
-            try
-            {
-                ChangeTracker.DetectChanges();
+        //    return await base.SaveChangesAsync(cancellationToken);
+        //}
 
-                foreach (var item in ChangeTracker.Entries())
-                {
-                    if (item.Entity is LogTransacoes || item.State is EntityState.Detached or EntityState.Unchanged)
-                        continue;
+        //private async Task SalvarLog()
+        //{
+        //    try
+        //    {
+        //        ChangeTracker.DetectChanges();
 
-                    if (item.State is EntityState.Modified)
-                    {
-                        Guid entidadeId;
-                        Guid? usuarioId = _logServico.BuscarUsuarioId();
+        //        foreach (var item in ChangeTracker.Entries())
+        //        {
+        //            if (item.Entity is LogTransacoes || item.State is EntityState.Detached or EntityState.Unchanged)
+        //                continue;
 
-                        var entidadeIdObject = item.Properties.Where(c => c.Metadata.Name == nameof(EntidadeBase.Id)).FirstOrDefault()?.CurrentValue;
-                        if (!usuarioId.HasValue || entidadeIdObject == null || !Guid.TryParse(entidadeIdObject.ToString(), out entidadeId))
-                            continue;
+        //            if (item.State is EntityState.Modified)
+        //            {
+        //                Guid entidadeId;
+        //                Guid? usuarioId = _logServico.BuscarUsuarioId();
 
-                        foreach (var propriedade in item.Properties.Where(c => c.IsModified && c.Metadata.Name != nameof(EntidadeBase.Id) && c.Metadata.Name != nameof(EntidadeBase.Excluido)))
-                        {
-                            string valorAnterior = propriedade.OriginalValue == null ? string.Empty : propriedade.OriginalValue.ToString();
-                            string valorAtual = propriedade.CurrentValue == null ? string.Empty : propriedade.CurrentValue.ToString();
+        //                var entidadeIdObject = item.Properties.Where(c => c.Metadata.Name == nameof(EntidadeBase.Id)).FirstOrDefault()?.CurrentValue;
+        //                if (!usuarioId.HasValue || entidadeIdObject == null || !Guid.TryParse(entidadeIdObject.ToString(), out entidadeId))
+        //                    continue;
 
-                            if (propriedade.IsModified && valorAnterior != valorAtual)
-                            {
-                                var log = new LogTransacoes
-                                {
-                                    Comando = "UPDATE",
-                                    Data = DateTime.Now,
-                                    EntidadeId = entidadeId,
-                                    UsuarioId = usuarioId,
-                                    //ValorAnterior = valorAnterior,
-                                    //ValorAtual = valorAtual,
-                                    //CampoAlterado = propriedade.Metadata.Name,
+        //                foreach (var propriedade in item.Properties.Where(c => c.IsModified && c.Metadata.Name != nameof(EntidadeBase.Id) && c.Metadata.Name != nameof(EntidadeBase.Excluido)))
+        //                {
+        //                    string valorAnterior = propriedade.OriginalValue == null ? string.Empty : propriedade.OriginalValue.ToString();
+        //                    string valorAtual = propriedade.CurrentValue == null ? string.Empty : propriedade.CurrentValue.ToString();
 
-                                };
-                                await LogTransacoes.AddAsync(log);
-                            }
-                        }
-                    }
-                }
+        //                    if (propriedade.IsModified && valorAnterior != valorAtual)
+        //                    {
+        //                        var log = new LogTransacoes
+        //                        {
+        //                            Comando = "UPDATE",
+        //                            Data = DateTime.Now,
+        //                            EntidadeId = entidadeId,
+        //                            UsuarioId = usuarioId,
+        //                            //ValorAnterior = valorAnterior,
+        //                            //ValorAtual = valorAtual,
+        //                            //CampoAlterado = propriedade.Metadata.Name,
 
-            }
-            catch (Exception)
-            {
+        //                        };
+        //                        await LogTransacoes.AddAsync(log);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    catch (Exception)
+        //    {
 
                 
-            }
-        }
+        //    }
+        //}
 
     }
 }

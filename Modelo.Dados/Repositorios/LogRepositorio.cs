@@ -12,9 +12,9 @@ namespace Modelo.Dados.Repositorios
 {
     public class LogRepositorio : ILogRepositorio
     {
-        private readonly Contexto.DbContexto _contexto;
+        private readonly DbContexto _contexto;
 
-        public LogRepositorio(Contexto.DbContexto contexto)
+        public LogRepositorio(DbContexto contexto)
         {
             _contexto = contexto;
         }

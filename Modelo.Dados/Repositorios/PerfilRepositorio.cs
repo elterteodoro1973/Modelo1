@@ -38,6 +38,6 @@ namespace Modelo.Dados.Repositorios
         //=> await _contexto.CBHUsuarios.Where(c => !c.Excluido && c.PerfilId == id).AnyAsync();
 
         public async Task<bool> VerificarSeIdEPerfilAdmDAEE(Guid id)
-        => await _contexto.Perfis.Where(c => !c.Excluido.Value && c.Nome.ToUpper().Trim() == "ADMINISTRADOR DAEE").AnyAsync();
+        => await _contexto.Perfis.Where(c => !c.Excluido.Value && c.Nome.ToUpper().Trim() == "ADMINISTRADOR").AnyAsync();
     }
 }

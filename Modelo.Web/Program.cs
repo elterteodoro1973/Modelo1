@@ -1,14 +1,12 @@
-using Modelo.Aplicacao.Parsers;
-using Modelo.Dominio.DTO;
-using Modelo.Dominio.Entidades;
-using Modelo.Infraestrutura.CrossCutting.IoC;
-using Modelo.Web.Configuracoes.AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Modelo.Dominio.DTO;
+using Modelo.Infraestrutura.CrossCutting.IoC;
+using Modelo.Web.Configuracoes.AutoMapper;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);

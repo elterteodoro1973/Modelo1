@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+    <!-- for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" lang="pt-br" content="DAEE - Sistema de cobranças de Recursos Hídricos">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DAEE - Sistema de cobranças de Recursos Hídricos">
+    <meta name="theme-color" content="#FFFFFF">
+    <title>@ViewData["Title"] - Sistema de cobranças de Recursos Hídricos</title>    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/mvc-grid/mvc-grid.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Modelo.Web.styles.css" asp-append-version="true" />
+
+    <link href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <partial name="_Header" />
+    <partial name="_MenuLateral" />
+    
+    <div class="o-container row" id="containerLayout" style="flex: 1;">
+
+        <main role="main" class="col-10 h-100">
+            @RenderBody()
+        </main>
+    </div>
+    <div id="loadingDiv">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="spinner-border text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalConfirmacao" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <p id="avisoConfirmacao lh-base"> Deseja incluir </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="o-btn-default o-btn " id="btnConfirmarModal">Sim</button>
+                    <button type="button" class="o-btn o-btn-alt is-valid " data-bs-dismiss="modal">Não</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* <div id="loadingDiv">
+        <div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+        </div>
+        </div>
+        </div> *@
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/cbFamily.js"></script>
+    <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.pt.min.js"></script>
+    <script></script>
+    <script src="~/js/mvc-grid/mvc-grid.js"></script>
+    <script src="~/lib/jquery.mask/jquery.mask.js"></script>
+    <script src="~/lib/jquery-maskmoney/jquery.maskMoney.min.js"></script>
+
+    <script>
+
+        function alertBootstrapp(mensagemSuceso, tipoAlerta) {
+            let html = `<div class="alert alert-${tipoAlerta} alert-dismissible fade show" role="alert">
+                                                                    ${mensagemSuceso}
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>`;
+            $("#avisos").prepend(html);
+        }
+
+
+        function pegarToken() {
+            var token = '@Html.AntiForgeryToken()';
+            token = $(token).val();
+            return token;
+        }
+
+        $(document).ready(() => {
+            $('#loadingDiv').hide();
+        })
+
+
+
+        MvcGrid.lang = {
+            default: {
+                "equals": "Igual",
+                "not-equals": "Diferente"
+            },
+            text: {
+                "contains": "Possui",
+                "equals": "Igual",
+                "not-equals": "Diferente",
+                "starts-with": "Começa com",
+                "ends-with": "Termina com"
+            },
+            number: {
+                "equals": "Igual",
+                "not-equals": "Diferente",
+                "less-than": "Inferior a",
+                "greater-than": "Superior a",
+                "less-than-or-equal": "Inferior ou igual a",
+                "greater-than-o-requal": "Superior ou igual a"
+            },
+            date: {
+                "equals": "Igual",
+                "not-equals": "Diferente",
+                "earlier-than": "Inferior a",
+                "later-than": "Superior a",
+                "earlier-than-or-equal": "Inferior ou igual a",
+                "later-than-or-equal": "Superior ou igual a"
+            },
+            guid: {
+                "equals": "Igual",
+                "not-equals": "Diferente",
+            },
+            filter: {
+                "apply": "✓",
+                "remove": "✘"
+            },
+            operator: {
+                "select": "selecione",
+                "and": "e",
+                "or": "ou"
+            }
+        };
+        document.querySelectorAll(".mvc-grid").forEach(element => {
+
+            let grid = new MvcGrid(element);
+
+        })
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

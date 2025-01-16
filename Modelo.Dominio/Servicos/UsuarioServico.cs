@@ -366,7 +366,7 @@ namespace Modelo.Dominio.Servicos
 
 
 
-            if (cbhId == Guid.Empty && perfil != null && perfil.Nome.ToUpper().Trim() == "ADMINISTRADOR DAEE")
+            if (cbhId == Guid.Empty && perfil != null && perfil.Nome.ToUpper().Trim() == "ADMINISTRADOR")
             {
                 usuarioDB.Administrador = true;
 
@@ -403,7 +403,7 @@ namespace Modelo.Dominio.Servicos
         //    if (_notificador.TemNotificacao()) return;
 
         //    if (cbhId == Guid.Empty && !await _perfilRepositorio.VerificarSeIdEPerfilAdmDAEE(perfilId))
-        //        _notificador.Adicionar(new Notificacao("Identificador de CBH usuário é obrigatório quando o perfil não for Administrador DAEE !"));
+        //        _notificador.Adicionar(new Notificacao("Identificador de CBH usuário é obrigatório quando o perfil não for Administrador!"));
            
             
 
