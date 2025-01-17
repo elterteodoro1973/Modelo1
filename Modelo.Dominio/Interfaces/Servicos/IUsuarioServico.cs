@@ -16,7 +16,7 @@ namespace Modelo.Dominio.Interfaces.Servicos
         Task CadastrarSenha(Guid token, string email, string senha, string novaSenha);
         Task TrocarCBHUsuarioLogado(Guid usuarioId, Guid cbhIdSelecionada);
         
-        Task CadastrarPerfilPermissao(Guid usuarioId, Guid cbhUsuarioId, Guid perfilId);
+        Task CadastrarPerfilPermissao(Guid usuarioId,  Guid perfilId);
         void Logout();
         Task ResetarSenha(string caminho, string email);
         Task ValidarTokenEEmailResetarSenha(Guid token, string email);

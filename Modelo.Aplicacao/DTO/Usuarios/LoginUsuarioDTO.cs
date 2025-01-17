@@ -9,6 +9,6 @@ namespace Modelo.Aplicacao.DTO.Usuarios
     public class LoginUsuarioDTO
     {
         public Guid Id { get; set; }
-        public bool SenhaCadastrada { get; set; }
+        public string NomeCompleto { get; set; }
     }
 }

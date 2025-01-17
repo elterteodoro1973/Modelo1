@@ -260,11 +260,11 @@ namespace Modelo.Web.Controllers
             ViewBag.Perfis = _mapper.Map<IList<PerfilViewModel>>(await _perfilAppServico.BuscarPerfis()).OrderBy(c => c.Nome).ToList();
 
             Guid? perfilId = null;
-            if (usuario.Administrador)
-            {
-                var perfil = _mapper.Map<PerfilViewModel>(await _perfilAppServico.BuscarPerfilAdministrador());
-                perfilId = perfil.Id;
-            }
+            //if (usuario.Administrador)
+            //{
+            //    var perfil = _mapper.Map<PerfilViewModel>(await _perfilAppServico.BuscarPerfilAdministrador());
+            //    perfilId = perfil.Id;
+            //}
             
             
 
@@ -274,7 +274,7 @@ namespace Modelo.Web.Controllers
                 Email = usuario.Email,
                 UsuarioId = id,
                 PerfilId = perfilId,
-                CbhId = usuario.CBHPrincipalId
+               
 
             };
 

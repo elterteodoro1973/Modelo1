@@ -355,7 +355,7 @@ namespace Modelo.Dominio.Servicos
 
         }
 
-        public async Task CadastrarPerfilPermissao(Guid usuarioId, Guid cbhId, Guid perfilId)
+        public async Task CadastrarPerfilPermissao(Guid usuarioId,  Guid perfilId)
         {
             //await _ValidarCadastroPerfilPermissaoUsuarioCBH(usuarioId, cbhId, perfilId, permissoes);
 
@@ -366,11 +366,11 @@ namespace Modelo.Dominio.Servicos
 
 
 
-            if (cbhId == Guid.Empty && perfil != null && perfil.Nome.ToUpper().Trim() == "ADMINISTRADOR")
-            {
-                usuarioDB.Administrador = true;
+            //if ( perfil.Nome.ToUpper().Trim() == "ADMINISTRADOR")
+            //{
+            //    usuarioDB.Administrador = true;
 
-            }
+            //}
 
             await _usuarioRepositorio.IniciarTransacao();
 

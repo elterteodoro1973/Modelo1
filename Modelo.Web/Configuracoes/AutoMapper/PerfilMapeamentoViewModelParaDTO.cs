@@ -12,7 +12,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
         public PerfilMapeamentoViewModelParaDTO()
         {
             CreateMap<CadastrarEditarUsuarioViewModel, CadastrarEditarUsuarioDTO>();
-            CreateMap<EnderecoViewModel, EnderecoCadastroUsuarioDTO>();
+            //CreateMap<EnderecoViewModel, EnderecoCadastroUsuarioDTO>();
             CreateMap<CadastrarNovaSenhaViewModel, CadastrarNovaSenhaDTO>();
             
             CreateMap<PerfilViewModel, PerfilDTO>()
@@ -28,8 +28,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
             
             CreateMap<CadastrarPerfilUsuarioViewModel, CadastrarPerfilUsuarioDTO>()
                 .ForMember(c => c.PerfilId, m => m.MapFrom(c => c.PerfilId))
-                .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))
-                .ForMember(c => c.CbhId, m => m.MapFrom(c => c.CbhId)); 
+                .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId)); 
 
             CreateMap<LogPerfilViewModel, LogTransacoesDTO>()
                .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))

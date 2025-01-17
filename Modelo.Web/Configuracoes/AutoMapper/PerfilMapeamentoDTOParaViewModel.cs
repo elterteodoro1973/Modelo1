@@ -14,7 +14,7 @@ namespace Modelo.Web.Configuracoes.AutoMapper
         {
             CreateMap<UsuariosTelaInicialDTO, UsuariosViewModel>();
             CreateMap<CadastrarEditarUsuarioDTO, CadastrarEditarUsuarioViewModel>();
-            CreateMap<EnderecoCadastroUsuarioDTO, EnderecoViewModel>();
+            //CreateMap<EnderecoCadastroUsuarioDTO, EnderecoViewModel>();
             CreateMap<LogTransacoesDTO, LogViewModel>()
                 .ForMember(c => c.DataFormatada, m =>
                 {

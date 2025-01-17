@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="DTO\Relatorios\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>

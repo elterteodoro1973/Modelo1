@@ -10,8 +10,7 @@ namespace Modelo.Aplicacao.DTO.Usuarios
 {
     public class CadastrarPerfilUsuarioDTO
     {
-        public Guid UsuarioId { get; set; }
-        public Guid CbhId { get; set; }
+        public Guid UsuarioId { get; set; }       
         public Guid PerfilId { get; set; }
         public IList<Claim> Claims { get; set; }
     }

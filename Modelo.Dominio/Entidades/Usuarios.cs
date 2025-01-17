@@ -22,18 +22,20 @@ namespace Modelo.Dominio.Entidades
         [StringLength(512)]
         public string Email { get; set; }
         public string Senha { get; set; }
-        public bool Inativo { get; set; }
-        public bool Administrador { get; set; }
-        public Guid? PerfilId { get; set; }
+        public bool Inativo { get; set; }        
+        //public Guid? PerfilId { get; set; }
+        
         [StringLength(256)]
         [Unicode(false)]
         public string NomeCompleto { get; set; }
 
-        [ForeignKey("PerfilId")]
-        [InverseProperty("Usuarios")]
+        //[ForeignKey("PerfilId")]
+        //[InverseProperty("Usuarios")]
         public virtual Perfis Perfil { get; set; }
+        
         [InverseProperty("Usuario")]
         public virtual ICollection<LogAcessos> LogAcessos { get; set; }
+        
         [InverseProperty("Usuario")]
         public virtual ICollection<LogTransacoes> LogTransacoes { get; set; }
     }

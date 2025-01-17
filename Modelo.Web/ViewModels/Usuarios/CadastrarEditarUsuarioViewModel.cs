@@ -17,11 +17,7 @@ namespace Modelo.Web.ViewModels.Usuarios
         public string CPF { get; set; } = null!;
         public IList<string> Emails { get; set; } = null!;
         public IList<string> Telefone { get; set; } = null!;
-        public IList<EnderecoViewModel> Enderecos { get; set; } = null!;
-        [Display(Name = "CBH Principal")]
-        [Required(ErrorMessage = "{0} é obrigatório !")]
-        public Guid? CBHPrincipal { get; set; }
-        public IList<Guid>? CBHs { get; set; }
+        
         public bool UsuarioAtivo { get; set; } = true;
     }
 }

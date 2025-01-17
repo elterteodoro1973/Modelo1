@@ -8,8 +8,8 @@ namespace Modelo.Web.ViewModels.Usuarios
         public string? NomeUsuario { get; set; }
         public string? Email { get; set; }
         public Guid? UsuarioId { get; set; }
-        [Display(Name = "CBH ")]  
-        public Guid? CbhId { get; set; }
+        
+        
         [Display(Name = "Perfil")]
         [Required(ErrorMessage = "{0} é obrigatório !")]
         public Guid? PerfilId { get; set; }

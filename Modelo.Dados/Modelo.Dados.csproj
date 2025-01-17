@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Modelo.Dominio\Modelo.Dominio.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mapeamentos\" />
-  </ItemGroup>
-
 </Project>

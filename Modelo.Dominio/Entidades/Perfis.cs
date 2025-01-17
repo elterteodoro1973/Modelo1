@@ -16,16 +16,12 @@ namespace Modelo.Dominio.Entidades
             Usuarios = new HashSet<Usuarios>();
         }
 
-        
-
-
         [Required]
         [StringLength(256)]
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public bool? Administrador { get; set; }
         
-
         [InverseProperty("Perfil")]
         public virtual ICollection<PermissoesPerfis> PermissoesPerfis { get; set; }
         [InverseProperty("Perfil")]

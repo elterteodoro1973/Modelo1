@@ -17,7 +17,8 @@ namespace Modelo.Aplicacao.Parsers
                 .ForMember(c => c.Email, m => m.MapFrom(c => c.Email));
          
             CreateMap<Usuarios, LoginUsuarioDTO>()
-                .ForMember(c => c.Id, m => m.MapFrom(c => c.Id));
+                .ForMember(c => c.Id, m => m.MapFrom(c => c.Id))
+                .ForMember(c => c.NomeCompleto, m => m.MapFrom(c => c.NomeCompleto));
 
             CreateMap<Perfis, PerfilDTO>()
                 .ForMember(c => c.Id, m => m.MapFrom(c => c.Id))

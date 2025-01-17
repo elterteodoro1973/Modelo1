@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Modelo.Aplicacao.DTO.Usuarios
 {
-    public class VerificarUsuarioPossuiSenhaDTO
+    public class PerfilEPermissoesUsuarioDTO
     {
-        public bool UsuarioInvalido { get; set; } = true;
-        public bool SenhaCadastrada { get; set; } = false;
+        public Guid? PerfilId { get; set; }
+        public IList<Claim>? Permissoes { get; set; }
     }
 }

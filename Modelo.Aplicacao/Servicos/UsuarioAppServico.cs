@@ -42,22 +42,6 @@ namespace Modelo.Aplicacao.Servicos
             if (!string.IsNullOrEmpty(dto.CPF) && !string.IsNullOrWhiteSpace(dto.CPF))
                 dto.CPF = dto.CPF.Replace(".", "").Replace("-", "");
 
-            if (dto.Telefone != null)
-            {
-                for (int i = 0; i < dto.Telefone.Count; i++)
-                {
-                    dto.Telefone[i] = dto.Telefone[i].Replace("(", "").Replace(")", "").Replace("-", "");
-                }
-            }
-
-
-            if (dto.Enderecos != null)
-            {
-                for (int i = 0; i < dto.Enderecos.Count; i++)
-                {
-                    dto.Enderecos[i].CEP = dto.Enderecos[i].CEP.Replace("-", "");
-                }
-            }
 
             var usuario = _mapper.Map<Usuarios>(dto);
            
@@ -118,20 +102,8 @@ namespace Modelo.Aplicacao.Servicos
             if (!string.IsNullOrEmpty(dto.CPF) && !string.IsNullOrWhiteSpace(dto.CPF))
                 dto.CPF = dto.CPF.Replace(".", "").Replace("-", "");
 
-            if (dto.Telefone != null)
-            {
-                for (int i = 0; i < dto.Telefone.Count; i++)
-                {
-                    dto.Telefone[i] = dto.Telefone[i].Replace("(", "").Replace(")", "").Replace("-", "");
-                }
-            }
-            if (dto.Enderecos != null)
-            {
-                for (int i = 0; i < dto.Enderecos.Count; i++)
-                {
-                    dto.Enderecos[i].CEP = dto.Enderecos[i].CEP.Replace("-", "");
-                }
-            }
+           
+            
 
             var usuario = _mapper.Map<Usuarios>(dto);
             
@@ -189,7 +161,7 @@ namespace Modelo.Aplicacao.Servicos
                     foreach (var prop in usuario.GetType().GetProperties())
                     {
                         if (prop.Name != nameof(Usuarios.CPF) && prop.Name != nameof(Usuarios.NomeCompleto) 
-                            && prop.Name != nameof(Usuarios.Inativo) && prop.Name != nameof(Usuarios.Administrador))
+                            && prop.Name != nameof(Usuarios.Inativo) )
                             continue;
 
                         if(prop.Name == nameof(Usuarios.Inativo))
@@ -206,26 +178,6 @@ namespace Modelo.Aplicacao.Servicos
                                     Usuario = log.Usuario != null ? log.Usuario.NomeCompleto : "",
                                     Valor = usuario.Inativo ? "Falso" : "Verdadeiro"
                                 }) ;
-                            }
-                            continue;
-                        }
-
-
-
-                        if (prop.Name == nameof(Usuarios.Administrador))
-                        {
-                            var ultimoValorUsuarioAtivo = listaLog.Where(c => c.Campo == "Administrador").OrderByDescending(c => c.Data).FirstOrDefault();
-                            if ((ultimoValorUsuarioAtivo == null && usuario.Administrador) || (ultimoValorUsuarioAtivo != null && ultimoValorUsuarioAtivo.Valor != (usuario.Administrador ? "Verdadeiro": "Falso" )))
-                            {
-                                listaLog.Add(new LogTransacoesDTO
-                                {
-                                    Campo = "Administrador",
-                                    Data = log.Data,
-                                    EntidadeId = log.EntidadeId,
-                                    Tipo = "Alteração",
-                                    Usuario = log.Usuario != null ? log.Usuario.NomeCompleto : "",
-                                    Valor = usuario.Inativo ?  "Verdadeiro" : "Falso" 
-                                });
                             }
                             continue;
                         }
@@ -281,10 +233,10 @@ namespace Modelo.Aplicacao.Servicos
         public async Task<UsuariosTelaInicialDTO?> BuscarUsuarioPorId(Guid idUsuario)
         => _mapper.Map<UsuariosTelaInicialDTO?>(await _usuarioRepositorio.BuscarUsuarioPorId(idUsuario));
 
-        //public async Task<PerfilEPermissoesCBHUsuarioDTO?> BuscarPermissoesUsuarioCBHPorId(Guid cbhId, Guid usuarioId)
+        //public async Task<PerfilEPermissoesUsuarioDTO?> BuscarPermissoesUsuarioCBHPorId(Guid cbhId, Guid usuarioId)
         //{
 
-        //    var dto = _mapper.Map<PerfilEPermissoesCBHUsuarioDTO>(cbhUsuario);
+        //    var dto = _mapper.Map<PerfilEPermissoesUsuarioDTO>(cbhUsuario);
 
         //    dto.Permissoes = new List<Claim>();
             
@@ -315,7 +267,7 @@ namespace Modelo.Aplicacao.Servicos
 
         public async Task CadastrarPermissoesEPerfilUsuario(CadastrarPerfilUsuarioDTO dto)
         {            
-            await _usuarioServico.CadastrarPerfilPermissao(dto.UsuarioId, dto.CbhId, dto.PerfilId);
+            await _usuarioServico.CadastrarPerfilPermissao(dto.UsuarioId,  dto.PerfilId);
         }
 
         public async Task ResetarSenha(string caminho, string email)

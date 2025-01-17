@@ -11,23 +11,13 @@ namespace Modelo.Aplicacao.Parsers
         public PerfilMapeamentoDTOParaEntidade()
         {
             CreateMap<CadastrarEditarUsuarioDTO, Usuarios>()
-                .ForMember(c => c.Id, m =>
+               .ForMember(c => c.Id, m =>
                 {
                     m.MapFrom(c => c.Id.HasValue ? c.Id : Guid.NewGuid());
                 })                
                 .ForMember(c => c.NomeCompleto, m => m.MapFrom(c => c.Nome))
                 .ForMember(c => c.CPF, m => m.MapFrom(c => c.CPF))
-                
-                .ForMember(c => c.Email, m =>
-                {
-                    m.PreCondition(c => c.Emails.Any());
-                    m.MapFrom(c => c.Emails.First());
-                })
-                
                 .ForMember(c => c.Inativo, m => m.MapFrom(c => !c.UsuarioAtivo));
-
-          
-
 
             CreateMap<PerfilDTO, Perfis>()
                 .ForMember(c => c.Id, m =>
@@ -39,16 +29,11 @@ namespace Modelo.Aplicacao.Parsers
                 .ForMember(c => c.Descricao, m => m.MapFrom(c => c.Descricao))
                 .ForMember(c => c.Administrador, m => m.MapFrom(c => c.Administrador));
 
-          
-          
-
             CreateMap<LogTransacoesDTO, LogTransacoes>()
             .ForMember(c => c.Data, m => m.MapFrom(c => c.Data))
             .ForMember(c => c.EntidadeId, m => m.MapFrom(c => c.EntidadeId))
             .ForMember(c => c.UsuarioId, m => m.MapFrom(c => c.UsuarioId))
             .ForMember(c => c.Dados, m => m.MapFrom(c => c.Dados));
-
-
         }
     }
 }

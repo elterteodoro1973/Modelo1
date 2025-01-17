@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace Modelo.Dominio.Enums
 {
-    public enum TipoUsoEnum
+    public enum TipoAcao
     {
-        CaptacaoSubterranea = 1,
-        CaptacaoSuperficial = 2,
-        LancamentoSuperficial = 3
+        Adicionar = 1,
+        Visualizar =2,        
+        Editar = 3,
+        Excluir=4,
+        Historico =5,
+        Permissoes= 6 
     }
 }
