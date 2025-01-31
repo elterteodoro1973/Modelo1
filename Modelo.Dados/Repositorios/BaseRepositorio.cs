@@ -1,18 +1,9 @@
-﻿using Modelo.Dados.Contexto;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Modelo.Dominio.Entidades;
-using Modelo.Dominio.Interfaces;
 using Modelo.Dominio.Interfaces.Repositorios;
 using Modelo.Dominio.Interfaces.Servicos;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace Modelo.Dados.Repositorios
 {
@@ -75,8 +66,7 @@ namespace Modelo.Dados.Repositorios
         public virtual async Task IniciarTransacao()
         {
             if (_contexto.Database.CurrentTransaction == null)
-                 await _contexto.Database.BeginTransactionAsync();
-           
+                 await _contexto.Database.BeginTransactionAsync();           
         }
 
         public virtual async Task Roolback()
@@ -94,18 +84,16 @@ namespace Modelo.Dados.Repositorios
         public virtual async Task Atualizar(T entidade)
         {
             _contexto.Set<T>().Entry(entidade).State = EntityState.Modified;
-            //var log = new Log
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Data = DateTime.Now,
-            //    Comando = "UPDATE",
-            //    EntidadeId = entidade.Id,
-            //    UsuarioId = _logServico.BuscarUsuarioId(),
-            //    Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
-            //};
-            //await _contexto.LogTransacoes.AddAsync(log);
-
-
+            var log = new LogTransacoes
+            {
+                Id = Guid.NewGuid(),
+                Data = DateTime.Now,
+                Comando = "UPDATE",
+                EntidadeId = entidade.Id,
+                UsuarioId = _logServico.BuscarUsuarioId(),
+                Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
+            };
+            await _contexto.LogTransacoes.AddAsync(log);
         }
 
         public virtual async Task Excluir(T entidadeBase)
@@ -127,22 +115,21 @@ namespace Modelo.Dados.Repositorios
         public async Task AdicionarLista(IList<T> entidades)
         {
             await _contexto.Set<T>().AddRangeAsync(entidades);
-            //IList<Log> logs = new List<Log>();
-            //foreach (var item in entidades)
-            //{
-            //    var log = new Log
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Data = DateTime.Now,
-            //        Comando = "INSERT",
-            //        EntidadeId = item.Id,
-            //        UsuarioId = _logServico.BuscarUsuarioId(),
-            //        Dados = JsonSerializer.Serialize(item, BuscarConfiguracaoJSON())
-            //    };
-            //    logs.Add(log);
-            //}
-            //await _contexto.LogTransacoes.AddRangeAsync(logs);
-
+            IList<LogTransacoes> logs = new List<LogTransacoes>();
+            foreach (var item in entidades)
+            {
+                var log = new LogTransacoes
+                {
+                    Id = Guid.NewGuid(),
+                    Data = DateTime.Now,
+                    Comando = "INSERT",
+                    EntidadeId = item.Id,
+                    UsuarioId = _logServico.BuscarUsuarioId(),
+                    Dados = JsonSerializer.Serialize(item, BuscarConfiguracaoJSON())
+                };
+                logs.Add(log);
+            }
+            await _contexto.LogTransacoes.AddRangeAsync(logs);
         }
 
         public async Task RemoverLista(IList<T> entidades)
@@ -182,21 +169,21 @@ namespace Modelo.Dados.Repositorios
         public async Task AtualizarLista(IList<T> entidades)
         {
             _contexto.Set<T>().UpdateRange(entidades);
-            //IList<Log> logs = new List<Log>();
-            //foreach (var item in entidades)
-            //{
-            //    var log = new Log
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Data = DateTime.Now,
-            //        Comando = "UPDATE",
-            //        EntidadeId = item.Id,
-            //        UsuarioId = _logServico.BuscarUsuarioId(),
-            //        Dados = JsonSerializer.Serialize(item, BuscarConfiguracaoJSON())
-            //    };
-            //    logs.Add(log);
-            //}
-            //await _contexto.LogTransacoes.AddRangeAsync(logs);
+            IList<LogTransacoes> logs = new List<LogTransacoes>();
+            foreach (var item in entidades)
+            {
+                var log = new LogTransacoes
+                {
+                    Id = Guid.NewGuid(),
+                    Data = DateTime.Now,
+                    Comando = "UPDATE",
+                    EntidadeId = item.Id,
+                    UsuarioId = _logServico.BuscarUsuarioId(),
+                    Dados = JsonSerializer.Serialize(item, BuscarConfiguracaoJSON())
+                };
+                logs.Add(log);
+            }
+            await _contexto.LogTransacoes.AddRangeAsync(logs);
         }
 
         public virtual async Task<IList<LogTransacoes>?> BuscarLogsPorIds(IList<Guid> ids)

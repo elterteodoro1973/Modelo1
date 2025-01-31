@@ -126,23 +126,19 @@ namespace Modelo.Web.Controllers
 
             await _usuarioAppServico.Login(_env.WebRootPath, model.Email, model.Senha);
 
-
             return RedirectToAction("Index", "Home");
 
         }
 
         public async Task<IActionResult> Adicionar()
-        {
-            
+        {            
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Adicionar([Bind("Nome, CPF, Emails, Telefone, Enderecos, CBHs, CBHPrincipal")] CadastrarEditarUsuarioViewModel model)
-        {
-            
-
+        { 
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -172,9 +168,6 @@ namespace Modelo.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(Guid id, [Bind("Id, Nome, CPF, Emails, Telefone, Enderecos, CBHs, UsuarioAtivo, CBHPrincipal")] CadastrarEditarUsuarioViewModel model)
         {
-           
-            
-
             if (id != model.Id)
                 ModelState.AddModelError("", "Usuário Inválido !");
 

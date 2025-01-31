@@ -11,12 +11,13 @@
     <article action="" class="c-login__box">
         <header class="c-login__header">
             <img src="~/imagens/main/logo-daee.png" alt="Logo do DAEE" />
-            <h2 class="c-login__title"> Sistema de Cobrança de Recursos Hídricos do Estado de São Paulo </h2>
+            <h2 class="c-login__title"> Sistema modelo </h2>
         </header>
+        
         @if (ViewBag.ExibirMensagemSucesso == null)
         {
             <form asp-action="EsqueciSenha" class="c-login__form">
-                <h3 class="c-login__form--title"> Recpuerar Senha </h3>
+                <h3 class="c-login__form--title"> Recuperar Senha </h3>
 
                 <div class="c-login__form--fieldset">
                     <div asp-validation-summary="All" class="text-danger justify-content-start"></div>
@@ -36,6 +37,7 @@
                 <label class="fw-normal" style="text-align:center">Um link de recuperação foi enviado para o seu e-mail, Acesso o link para cadastrar uma nova senha.</label>
             </div>
         }
+
     </article>
 </section>
 

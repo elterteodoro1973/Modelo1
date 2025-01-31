@@ -23,14 +23,15 @@ namespace Modelo.Dominio.Entidades
         public string Email { get; set; }
         public string Senha { get; set; }
         public bool Inativo { get; set; }        
-        //public Guid? PerfilId { get; set; }
+        
+        public Guid? PerfilId { get; set; }
         
         [StringLength(256)]
         [Unicode(false)]
         public string NomeCompleto { get; set; }
 
-        //[ForeignKey("PerfilId")]
-        //[InverseProperty("Usuarios")]
+        [ForeignKey("PerfilId")]
+        [InverseProperty("Usuarios")]
         public virtual Perfis Perfil { get; set; }
         
         [InverseProperty("Usuario")]

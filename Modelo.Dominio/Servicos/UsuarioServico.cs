@@ -24,26 +24,25 @@ namespace Modelo.Dominio.Servicos
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
-        private INotificador _notificador;
-       
-        private readonly IPerfilRepositorio _perfilRepositorio;
-       
+        private INotificador _notificador;       
+        private readonly IPerfilRepositorio _perfilRepositorio;       
         private readonly EmailConfiguracao _emailConfiguracao;
-       
+        private readonly IEmailServico _emailServico;
 
-        public UsuarioServico(IHttpContextAccessor httpContext, IUsuarioRepositorio usuarioRepositorio,
-            INotificador notificador, ILogServico logServico,
-
+        public UsuarioServico(IHttpContextAccessor httpContext, 
+            IUsuarioRepositorio usuarioRepositorio,
+            INotificador notificador, 
+            ILogServico logServico,
+            IEmailServico emailServico,
             IPerfilRepositorio perfilRepositorio,
-
-            IOptions<EmailConfiguracao> emailConfiguracao      ) : base(notificador, logServico)
+            IOptions<EmailConfiguracao> emailConfiguracao  ) : base(notificador, logServico)
         {
             _httpContext = httpContext;
             _usuarioRepositorio = usuarioRepositorio;            
             _notificador = notificador;           
             _perfilRepositorio = perfilRepositorio;
             _emailConfiguracao = emailConfiguracao.Value;
-            
+            _emailServico = emailServico;
         }
 
         public async Task Adicionar(string caminho, Usuarios usuario)
@@ -75,7 +74,7 @@ namespace Modelo.Dominio.Servicos
             //    //string textoEmail = $"Link para cadastrar uma nova Senha: {urlResetSenha}";
 
             //    string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuario.NomeCompleto, urlResetSenha);
-            //    await _emailServico.Enviar(usuario.EmailLogin, "Cadastrar Senha DAEE !", textoEmail);
+            //    await _emailServico.Enviar(usuario.EmailLogin, "Cadastrar Senha!", textoEmail);
 
 
             //    await _usuarioRepositorio.SalvarAlteracoes();
@@ -147,15 +146,13 @@ namespace Modelo.Dominio.Servicos
 
             var usuarioDB = await _usuarioRepositorio.BuscarPorEmail(email);
 
-             if (!await _usuarioRepositorio.SenhaValidaLogin(email, GetSha256Hash(senha)))
+            if (!await _usuarioRepositorio.SenhaValidaLogin(email, GetSha256Hash(senha)))
             {
                 _notificador.Adicionar(new Notificacao("Senha inválida !"));
                 return;
-
             }
             else
             {
-
                 //await _cobrancaServico.GerarCobrancaAnualPorCbh(usuarioDB.CBHPrincipalId.Value, 2023);
                 await Login(usuarioDB);
             }
@@ -436,9 +433,8 @@ namespace Modelo.Dominio.Servicos
                 var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token=11&email={email}");
 
                 //string textoEmail = $"Link para cadastrar uma nova Senha: {urlResetSenha}";
-                //string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuarioDB.NomeCompleto, urlResetSenha);
-                //await _emailServico.Enviar(email, "Cadastrar Senha DAEE !", textoEmail);
-
+                string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuarioDB.NomeCompleto, urlResetSenha);
+                await _emailServico.Enviar(email, "Resetar Senha!", textoEmail);
 
                 await _usuarioRepositorio.SalvarAlteracoes();
                 await _usuarioRepositorio.Commit();
@@ -447,7 +443,7 @@ namespace Modelo.Dominio.Servicos
             catch (Exception ex)
             {
                 await _usuarioRepositorio.Roolback();
-                _notificador.Adicionar(new Notificacao("Erro ao resetar a senha do usuário !" + ex.Message));
+                _notificador.Adicionar(new Notificacao("Erro ao resetar a senha do usuário: " + ex.Message));
             }
             return;
         }
