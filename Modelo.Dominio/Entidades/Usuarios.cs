@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Modelo.Dominio.Entidades
 {
     public partial class Usuarios : EntidadeBase
@@ -14,30 +15,38 @@ namespace Modelo.Dominio.Entidades
         {
             LogAcessos = new HashSet<LogAcessos>();
             LogTransacoes = new HashSet<LogTransacoes>();
-        }       
+        }
 
         [Required]
         [StringLength(20)]
         public string CPF { get; set; }
+
         [StringLength(512)]
         public string Email { get; set; }
+
         public string Senha { get; set; }
-        public bool Inativo { get; set; }        
+
         
+
+        public bool Inativo { get; set; }
+
         public Guid? PerfilId { get; set; }
-        
+
         [StringLength(256)]
         [Unicode(false)]
         public string NomeCompleto { get; set; }
 
+        [InverseProperty("Usuario")]
+        public virtual ICollection<LogAcessos> LogAcessos { get; set; } = new List<LogAcessos>();
+
+        [InverseProperty("Usuario")]
+        public virtual ICollection<LogTransacoes> LogTransacoes { get; set; } = new List<LogTransacoes>();
+
         [ForeignKey("PerfilId")]
         [InverseProperty("Usuarios")]
         public virtual Perfis Perfil { get; set; }
-        
-        [InverseProperty("Usuario")]
-        public virtual ICollection<LogAcessos> LogAcessos { get; set; }
-        
-        [InverseProperty("Usuario")]
-        public virtual ICollection<LogTransacoes> LogTransacoes { get; set; }
+
+        [InverseProperty("IdUsuarioNavigation")]
+        public virtual ICollection<ResetarSenha> ResetarSenha { get; set; } = new List<ResetarSenha>();
     }
 }

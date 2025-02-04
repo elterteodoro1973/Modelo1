@@ -19,8 +19,8 @@ namespace Modelo.Dados.Mapeamentos
             builder.Property(c => c.Senha);
             builder.Property(c => c.Excluido).HasDefaultValue(false);
             builder.Property(c => c.Inativo).HasDefaultValue(false);           
-            //builder.Property(c => c.PerfilId);
-            //builder.HasOne(d => d.Perfil).WithMany(p => p.Usuarios).HasConstraintName("FK_Usuarios_Perfis");
+            builder.Property(c => c.PerfilId);
+            builder.HasOne(d => d.Perfil).WithMany(p => p.Usuarios).HasConstraintName("FK_Usuarios_Perfis");
 
         }
     }

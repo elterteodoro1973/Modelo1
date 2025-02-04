@@ -22,6 +22,7 @@ namespace Modelo.Dados.Contexto
         public virtual DbSet<TipoAcao> TipoAcao { get; set; }
         public virtual DbSet<TipoAcesso> TipoAcesso { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<ResetarSenha> ResetarSenha { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,13 +34,12 @@ namespace Modelo.Dados.Contexto
             builder.ApplyConfiguration(new TipoAcessoMapeamento());
             builder.ApplyConfiguration(new TipoAcaoMapeamento());
             builder.ApplyConfiguration(new LogTransacoesMapeamento());
+            builder.ApplyConfiguration(new ResetarSenhaMapeamento());
         }
 
         public override int SaveChanges()
         {
-
             SalvarLog().ConfigureAwait(false).GetAwaiter().GetResult();
-
 
             foreach (var item in ChangeTracker.Entries()
                .Where(e => e.State == EntityState.Deleted &&
@@ -49,7 +49,6 @@ namespace Modelo.Dados.Contexto
                 item.CurrentValues["Excluido"] = true;
             }
             return base.SaveChanges();
-
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -63,10 +62,8 @@ namespace Modelo.Dados.Contexto
                 item.CurrentValues["Excluido"] = true;
             }
 
-
             return await base.SaveChangesAsync(cancellationToken);
         }
-
 
         private async Task SalvarLog()
         {
@@ -116,9 +113,7 @@ namespace Modelo.Dados.Contexto
             catch (Exception)
             {
 
-
             }
         }
-
     }
 }

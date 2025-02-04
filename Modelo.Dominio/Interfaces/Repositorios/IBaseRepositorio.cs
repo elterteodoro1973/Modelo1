@@ -14,7 +14,11 @@ namespace Modelo.Dominio.Interfaces.Repositorios
         Task Roolback();
         Task Dispose();
         Task Adicionar(T entidade);
+        Task Adicionar(T entidade, string entidadeNome);
+        Task Adicionar(T entidade, string entidadeNome,Guid usuarioId);
         Task Atualizar(T entidade);
+        Task Atualizar(T entidade,string entidadeNome);
+        Task Atualizar(T entidade, string entidadeNome, Guid usuarioId);
         Task Excluir(T entidadeBase);
         Task<T> BuscarPorId(Guid Id, bool rastreioEntidade = true, bool incluirExcluidas = false);
         Task<IList<T>> BuscarTodos(bool rastreioEntidade = true, bool incluirExcluidas = false);

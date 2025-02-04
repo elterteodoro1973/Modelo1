@@ -24,6 +24,7 @@ namespace Modelo.Dominio.Servicos
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
+        private readonly IResetarSenhaRepositorio _resetarSenhaRepositorio;
         private INotificador _notificador;       
         private readonly IPerfilRepositorio _perfilRepositorio;       
         private readonly EmailConfiguracao _emailConfiguracao;
@@ -31,6 +32,7 @@ namespace Modelo.Dominio.Servicos
 
         public UsuarioServico(IHttpContextAccessor httpContext, 
             IUsuarioRepositorio usuarioRepositorio,
+            IResetarSenhaRepositorio resetarSenhaRepositorio,
             INotificador notificador, 
             ILogServico logServico,
             IEmailServico emailServico,
@@ -38,7 +40,8 @@ namespace Modelo.Dominio.Servicos
             IOptions<EmailConfiguracao> emailConfiguracao  ) : base(notificador, logServico)
         {
             _httpContext = httpContext;
-            _usuarioRepositorio = usuarioRepositorio;            
+            _usuarioRepositorio = usuarioRepositorio;
+            _resetarSenhaRepositorio = resetarSenhaRepositorio;
             _notificador = notificador;           
             _perfilRepositorio = perfilRepositorio;
             _emailConfiguracao = emailConfiguracao.Value;
@@ -180,13 +183,10 @@ namespace Modelo.Dominio.Servicos
 
         private async Task _ValidarInclusao(Usuarios usuario)
         {
-            //if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(), usuario)) return;
+            if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(), usuario)) return;
 
             if (_notificador.TemNotificacao()) return;
-
-            if (_notificador.TemNotificacao()) return;
-
-            
+                        
             if (await _usuarioRepositorio.EmailPrincipalJaCadastrado(usuario.Email, null))
                 _notificador.Adicionar(new Notificacao("E-mail principal já cadastrado !"));
         }
@@ -423,26 +423,38 @@ namespace Modelo.Dominio.Servicos
 
 
             await _usuarioRepositorio.IniciarTransacao();
+            await _resetarSenhaRepositorio.IniciarTransacao();
 
             try
             {
-                usuarioDB.Senha = null;
-               
-                await _usuarioRepositorio.Atualizar(usuarioDB);
+                usuarioDB.Senha = null;               
+                await _usuarioRepositorio.Atualizar(usuarioDB, "Usuarios", usuarioDB.Id);
 
-                var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token=11&email={email}");
+                var token = Guid.NewGuid();
+                ResetarSenha resetarSenhaDB = new ResetarSenha();
+                resetarSenhaDB.Token = token;
+                resetarSenhaDB.UsuarioId = usuarioDB.Id;
+                resetarSenhaDB.DataSolicitacao = DateTime.Now;
+                resetarSenhaDB.DataExpiracao = DateTime.Now.AddHours(4);
+                await _resetarSenhaRepositorio.Adicionar(resetarSenhaDB,"ResetarSenha",usuarioDB.Id);
 
-                //string textoEmail = $"Link para cadastrar uma nova Senha: {urlResetSenha}";
+                var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token={token}");
+                               
                 string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuarioDB.NomeCompleto, urlResetSenha);
                 await _emailServico.Enviar(email, "Resetar Senha!", textoEmail);
 
                 await _usuarioRepositorio.SalvarAlteracoes();
                 await _usuarioRepositorio.Commit();
 
+                await _resetarSenhaRepositorio.SalvarAlteracoes();
+                await _resetarSenhaRepositorio.Commit();
+
             }
             catch (Exception ex)
             {
                 await _usuarioRepositorio.Roolback();
+                await _resetarSenhaRepositorio.Roolback();
+
                 _notificador.Adicionar(new Notificacao("Erro ao resetar a senha do usuário: " + ex.Message));
             }
             return;

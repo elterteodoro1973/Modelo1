@@ -1,9 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Modelo.Dominio.Entidades;
 using Modelo.Dominio.Interfaces.Repositorios;
 using Modelo.Dominio.Interfaces.Servicos;
+
 
 namespace Modelo.Dados.Repositorios
 {
@@ -20,7 +22,8 @@ namespace Modelo.Dados.Repositorios
 
         public virtual async Task Adicionar(T entidade)
         {
-            await _contexto.Set<T>().AddAsync(entidade);
+           await _contexto.Set<T>().AddAsync(entidade);           
+
             var log = new LogTransacoes
             {
                 Id = Guid.NewGuid(),
@@ -31,7 +34,40 @@ namespace Modelo.Dados.Repositorios
                 Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
             };
             await _contexto.LogTransacoes.AddAsync(log);
+        }
 
+        public virtual async Task Adicionar(T entidade, string entidadeNome)
+        {
+            await _contexto.Set<T>().AddAsync(entidade);
+
+            var log = new LogTransacoes
+            {
+                Id = Guid.NewGuid(),
+                Data = DateTime.Now,
+                Comando = "INSERT",
+                EntidadeId = entidade.Id,
+                EntidadeNome = entidadeNome,
+                UsuarioId = _logServico.BuscarUsuarioId(),
+                Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
+            };
+            await _contexto.LogTransacoes.AddAsync(log);
+        }
+
+        public virtual async Task Adicionar(T entidade, string entidadeNome, Guid usuarioId)
+        {
+            await _contexto.Set<T>().AddAsync(entidade);
+
+            var log = new LogTransacoes
+            {
+                Id = Guid.NewGuid(),
+                Data = DateTime.Now,
+                Comando = "INSERT",
+                EntidadeId = entidade.Id,
+                EntidadeNome = entidadeNome,
+                UsuarioId = usuarioId,
+                Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
+            };
+            await _contexto.LogTransacoes.AddAsync(log);
         }
 
 
@@ -91,6 +127,38 @@ namespace Modelo.Dados.Repositorios
                 Comando = "UPDATE",
                 EntidadeId = entidade.Id,
                 UsuarioId = _logServico.BuscarUsuarioId(),
+                Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
+            };
+            await _contexto.LogTransacoes.AddAsync(log);
+        }
+
+        public virtual async Task Atualizar(T entidade, string entidadeNome)
+        {
+            _contexto.Set<T>().Entry(entidade).State = EntityState.Modified;
+            var log = new LogTransacoes
+            {
+                Id = Guid.NewGuid(),
+                Data = DateTime.Now,
+                Comando = "UPDATE",
+                EntidadeId = entidade.Id,
+                EntidadeNome = entidadeNome,
+                UsuarioId = _logServico.BuscarUsuarioId(),
+                Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
+            };
+            await _contexto.LogTransacoes.AddAsync(log);
+        }
+
+        public virtual async Task Atualizar(T entidade, string entidadeNome,Guid usuarioId)
+        {
+            _contexto.Set<T>().Entry(entidade).State = EntityState.Modified;
+            var log = new LogTransacoes
+            {
+                Id = Guid.NewGuid(),
+                Data = DateTime.Now,
+                Comando = "UPDATE",
+                EntidadeId = entidade.Id,
+                EntidadeNome = entidadeNome,
+                UsuarioId = usuarioId,
                 Dados = JsonSerializer.Serialize(entidade, BuscarConfiguracaoJSON())
             };
             await _contexto.LogTransacoes.AddAsync(log);

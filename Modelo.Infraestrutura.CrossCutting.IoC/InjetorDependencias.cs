@@ -35,10 +35,12 @@ namespace Modelo.Infraestrutura.CrossCutting.IoC
             services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();           
             services.AddScoped<IPermissoesPerfilRepositorio, PermissoesPerfilRepositorio>();           
             services.AddScoped<ILogRepositorio, LogRepositorio>();
+            services.AddScoped<IResetarSenhaRepositorio, ResetarSenhaRepositorio>();
 
             ////Servicos de Dominio           
             services.AddScoped<IUsuarioServico, UsuarioServico>();           
-            services.AddScoped<IPerfilServico, PerfilServico>(); 
+            services.AddScoped<IPerfilServico, PerfilServico>();
+            services.AddScoped<IResetarSenhaServico, ResetarSenhaServico>();
 
             ////Servicos de Aplicacao
             services.AddScoped<IUsuarioAppServico, UsuarioAppServico>();           

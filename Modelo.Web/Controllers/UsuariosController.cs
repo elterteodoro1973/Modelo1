@@ -127,7 +127,6 @@ namespace Modelo.Web.Controllers
             await _usuarioAppServico.Login(_env.WebRootPath, model.Email, model.Senha);
 
             return RedirectToAction("Index", "Home");
-
         }
 
         public async Task<IActionResult> Adicionar()
@@ -234,7 +233,6 @@ namespace Modelo.Web.Controllers
 
             return Ok("Usuário Excluido com sucesso !");
         }
-
         public async Task<IActionResult> Permissoes(Guid id)
         {
             if (id == Guid.Empty)
@@ -319,7 +317,6 @@ namespace Modelo.Web.Controllers
             ViewBag.ExibirMensagemSucesso = true;
             return View();
         }
-
 
         public async Task<IActionResult> BuscarPermissoesCBHUsuario(Guid usuarioId, Guid cbhId)
         {
