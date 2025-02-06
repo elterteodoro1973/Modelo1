@@ -25,9 +25,8 @@ namespace Modelo.Aplicacao.Interfaces
 
         Task ResetarSenha(string caminho, string email);
         Task TrocarCBHUsuarioLogado(Guid usuarioId, Guid cbhIdSelecionada);
-        Task<UsuariosTelaInicialDTO?> BuscarUsuarioPorId(Guid idUsuario);
-        
+        Task<UsuariosTelaInicialDTO?> BuscarUsuarioPorId(Guid idUsuario);        
 
-        Task ValidarTokenEmailCadastrarNovaSenha(Guid token, string email);
+        Task ValidarTokenCadastrarNovaSenha(string token);
     }
 }

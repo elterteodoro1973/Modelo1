@@ -10,7 +10,7 @@ namespace Modelo.Aplicacao.DTO.Usuarios
     public class CadastrarNovaSenhaDTO
     {
         public string? Email { get; set; }
-        public Guid Token { get; set; }
+        public string Token { get; set; }
         public string Senha { get; set; } = null!;
         public string ConfirmarSenha { get; set; } = null!;
     }

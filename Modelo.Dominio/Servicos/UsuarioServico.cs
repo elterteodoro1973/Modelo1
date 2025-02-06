@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Security;
 
 namespace Modelo.Dominio.Servicos
 {
@@ -29,6 +30,7 @@ namespace Modelo.Dominio.Servicos
         private readonly IPerfilRepositorio _perfilRepositorio;       
         private readonly EmailConfiguracao _emailConfiguracao;
         private readonly IEmailServico _emailServico;
+       
 
         public UsuarioServico(IHttpContextAccessor httpContext, 
             IUsuarioRepositorio usuarioRepositorio,
@@ -115,7 +117,7 @@ namespace Modelo.Dominio.Servicos
             catch (Exception ex)
             {
                 await _usuarioRepositorio.Roolback();
-                _notificador.Adicionar(new Notificacao("Erro ao adicionar o Usuario !" + ex.Message));
+                _notificador.Adicionar(new Notificacao("Erro ao ediar o Usuario !" + ex.Message));
             }
         }
 
@@ -171,6 +173,10 @@ namespace Modelo.Dominio.Servicos
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity.AddClaim(new Claim("UsuarioId", usuarioDB.Id.ToString()));
             identity.AddClaim(new Claim("NomeUsuario", usuarioDB.NomeCompleto));
+
+
+            if (usuarioDB.Perfil.Administrador.Value)
+                identity.AddClaim(new Claim(ClaimTypes.Role, "ADMINISTRADOR"));
 
             var claimPrincipal = new ClaimsPrincipal(identity);
             await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties
@@ -252,48 +258,54 @@ namespace Modelo.Dominio.Servicos
 
         }
 
-        public async Task CadastrarSenha(Guid token, string email, string senha, string confirmarSenha)
+        public async Task CadastrarSenha(string token, string email, string senha, string confirmarSenha)
         {
             await _ValidarCadastroNovaSenha(token, email, senha, confirmarSenha);
 
             if (_notificador.TemNotificacao()) return;
 
-            var usuarioDB = await _usuarioRepositorio.BuscarPorEmail( email);
-           
+            var usuarioDB = await _usuarioRepositorio.BuscarPorEmail( email);           
             await _usuarioRepositorio.IniciarTransacao();
 
+            var resetarSenhaDB = await _resetarSenhaRepositorio.BuscarResetarSenhaPorToken(token);
+            await _resetarSenhaRepositorio.IniciarTransacao();
+
             try
-            {
-                
-                usuarioDB.Senha = GetSha256Hash(senha);
-                
+            {                
+                usuarioDB.Senha = GetSha256Hash(senha);                
                 await _usuarioRepositorio.Atualizar(usuarioDB);
                 await _usuarioRepositorio.SalvarAlteracoes();
                 await _usuarioRepositorio.Commit();
+
+                resetarSenhaDB.Efetivado = true;
+                await _resetarSenhaRepositorio.Atualizar(resetarSenhaDB);
+                await _resetarSenhaRepositorio.SalvarAlteracoes();
+                await _resetarSenhaRepositorio.Commit();
             }
             catch (Exception ex)
             {
                 await _usuarioRepositorio.Roolback();
+                await _resetarSenhaRepositorio.Roolback();
                 _notificador.Adicionar(new Notificacao("Erro ao cadastrar a nova senha do usuário !" + ex.Message));
             }
 
             await Login(usuarioDB);
         }
 
-        private async Task _ValidarCadastroNovaSenha(Guid token, string email, string senha, string confirmarSenha)
+        private async Task _ValidarCadastroNovaSenha(string token, string email, string senha, string confirmarSenha)
         {
-            await ValidarTokenEEmailResetarSenha(token, email);
+            await ValidarTokenResetarSenha(token);
 
             if (string.IsNullOrEmpty(senha) || string.IsNullOrWhiteSpace(senha))
                 _notificador.Adicionar(new Notificacao("Senha é obrigatório !"));
-            else if (senha.Length > 50)
+            else if (senha.Length > 30)
                 _notificador.Adicionar(new Notificacao("Senha possui tamanho máximo de 50 caracteres !"));
 
             if (_notificador.TemNotificacao()) return;
 
             if (string.IsNullOrEmpty(confirmarSenha) || string.IsNullOrWhiteSpace(confirmarSenha))
                 _notificador.Adicionar(new Notificacao("Confirmar senha é obrigatório !"));
-            else if (confirmarSenha.Length > 50)
+            else if (confirmarSenha.Length > 30)
                 _notificador.Adicionar(new Notificacao("Confirmar senha possui tamanho máximo de 50 caracteres !"));
 
             if (_notificador.TemNotificacao()) return;
@@ -420,44 +432,74 @@ namespace Modelo.Dominio.Servicos
             if (_notificador.TemNotificacao()) return;
 
             var usuarioDB = await _usuarioRepositorio.BuscarPorEmail(email);
-
-
-            await _usuarioRepositorio.IniciarTransacao();
+            
             await _resetarSenhaRepositorio.IniciarTransacao();
-
             try
             {
-                usuarioDB.Senha = null;               
-                await _usuarioRepositorio.Atualizar(usuarioDB, "Usuarios", usuarioDB.Id);
-
                 var token = Guid.NewGuid();
-                ResetarSenha resetarSenhaDB = new ResetarSenha();
-                resetarSenhaDB.Token = token;
-                resetarSenhaDB.UsuarioId = usuarioDB.Id;
-                resetarSenhaDB.DataSolicitacao = DateTime.Now;
-                resetarSenhaDB.DataExpiracao = DateTime.Now.AddHours(4);
+
+                ResetarSenha resetarSenhaDB = new ResetarSenha()
+                {
+                    Id = Guid.NewGuid(),
+                    Token = GerarHash512(token.ToString()).Replace("/", "b").Replace("=", "a").Replace("+", "C"),
+                    UsuarioId = usuarioDB.Id,
+                    DataSolicitacao = DateTime.Now,
+                    DataExpiracao = DateTime.Now.AddHours(4),
+                    Excluido = false
+                };
                 await _resetarSenhaRepositorio.Adicionar(resetarSenhaDB,"ResetarSenha",usuarioDB.Id);
 
-                var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token={token}");
-                               
+                var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token={resetarSenhaDB.Token}");
                 string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuarioDB.NomeCompleto, urlResetSenha);
                 await _emailServico.Enviar(email, "Resetar Senha!", textoEmail);
 
-                await _usuarioRepositorio.SalvarAlteracoes();
-                await _usuarioRepositorio.Commit();
-
                 await _resetarSenhaRepositorio.SalvarAlteracoes();
                 await _resetarSenhaRepositorio.Commit();
-
             }
             catch (Exception ex)
-            {
-                await _usuarioRepositorio.Roolback();
+            {                
                 await _resetarSenhaRepositorio.Roolback();
-
                 _notificador.Adicionar(new Notificacao("Erro ao resetar a senha do usuário: " + ex.Message));
             }
             return;
+        }        
+        
+        public static string GerarHash512(string chave)
+        {
+            byte[] saltBytes = null;
+
+            int minSaltSize = 4;
+            int maxSaltSize = 8;
+
+            Random random = new Random();
+            int saltSize = random.Next(minSaltSize, maxSaltSize);
+
+            saltBytes = new byte[saltSize];
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            rng.GetNonZeroBytes(saltBytes);
+
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(chave);
+            byte[] plainTextWithSaltBytes = new byte[plainTextBytes.Length + saltBytes.Length];
+
+            for (int i = 0; i < plainTextBytes.Length; i++)
+                plainTextWithSaltBytes[i] = plainTextBytes[i];
+
+            for (int i = 0; i < saltBytes.Length; i++)
+                plainTextWithSaltBytes[plainTextBytes.Length + i] = saltBytes[i];
+
+            HashAlgorithm hash = new SHA512Managed();
+            byte[] hashBytes = hash.ComputeHash(plainTextWithSaltBytes);
+            byte[] hashWithSaltBytes = new byte[hashBytes.Length + saltBytes.Length];
+
+            for (int i = 0; i < hashBytes.Length; i++)
+                hashWithSaltBytes[i] = hashBytes[i];
+
+            for (int i = 0; i < saltBytes.Length; i++)
+                hashWithSaltBytes[hashBytes.Length + i] = saltBytes[i];
+
+            string hashValue = Convert.ToBase64String(hashWithSaltBytes);
+
+            return hashValue;
         }
 
         private async Task _ValidarReseteSenha(string email)
@@ -466,34 +508,33 @@ namespace Modelo.Dominio.Servicos
                 _notificador.Adicionar(new Notificacao("E-mail é obrigatório !"));
             else if (!await _usuarioRepositorio.EmailValidoLogin(email))
                 _notificador.Adicionar(new Notificacao("E-mail inválido !"));
-        }
+        }        
 
-        public async Task ValidarTokenEEmailResetarSenha(Guid token, string email)
+        public async Task ValidarTokenResetarSenha(string token)
         {
-            if (token == Guid.Empty)
+            if (token == string.Empty)
             {
                 _notificador.Adicionar(new Notificacao("Token é obrigatório !"));
                 return;
             }
-            else if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email))
+
+            var resetarSenha = await _resetarSenhaRepositorio.BuscarResetarSenhaPorToken(token);
+
+            if (resetarSenha == null)
             {
-                _notificador.Adicionar(new Notificacao("Email é obrigatório !"));
+                _notificador.Adicionar(new Notificacao("Token inválido!"));
                 return;
             }
-
-            //var historico = await _historicoSenhaUsuarioRepositorio.BuscarPorTokenEEmail(token, email);
-
-            //if (historico == null)
-            //{
-            //    _notificador.Adicionar(new Notificacao("Token e E-mail inválidos !"));
-            //    return;
-            //}
-            //else if (historico.DataExpiracao < DateTime.Now)
-            //{
-            //    _notificador.Adicionar(new Notificacao("Link de Acesso inválido !"));
-            //    return;
-            //}
-
+            else if (resetarSenha.DataExpiracao < DateTime.Now)
+            {
+                _notificador.Adicionar(new Notificacao("Link de Acesso vencido !"));
+                return;
+            }
+            else if (resetarSenha.Efetivado.Value )
+            {
+                _notificador.Adicionar(new Notificacao("Token já validado!"));
+                return;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Modelo.Dominio.Entidades;
 
 public partial class ResetarSenha : EntidadeBase
 {   
-    public Guid Token { get; set; }
+    public String Token { get; set; }
 
     public Guid UsuarioId { get; set; }
 

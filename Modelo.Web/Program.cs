@@ -61,7 +61,7 @@ builder.Services.Configure<FormOptions>(x =>
 });
 
 InjetorDependencias.ConfigurarAutoMapper(builder.Services);
-//builder.Services.AddAutoMapper(typeof(PerfilMapeamentoViewModelParaDTO), typeof(PerfilMapeamentoDTOParaViewModel));
+builder.Services.AddAutoMapper(typeof(MapearViewModelParaDTO), typeof(MapearDTOParaViewModel));
 
 var app = builder.Build();
 

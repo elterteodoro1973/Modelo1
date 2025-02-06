@@ -22,82 +22,18 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="c-form__group col-8 ">
-                <div class="row m-0 w-100" style="gap:4rem">
-                    <label asp-for="Emails[0]" class="c-form__label form-label control-label">E-mail principal</label>
-                    <input asp-for="Emails[0]" posicao="0" type="email" data-msg-email="E-mail Inválido !" class="c-form__input form-control" required data-msg-required="E-mail principal é obrigatório !">
-                    <span asp-validation-for="Emails[0]" class="form-text text-danger"></span>
-                    <a href="#" id="addPrimeiroEmailSecundario" class="c-form__action repeater @(Model != null && Model.Emails != null && Model.Emails.Count > 1 ? "d-none": "")" onclick="adicionarEmail(this)">
-                        <i class="icon-add"></i> Adicionar outro E-mail
-                    </a>
-                </div>
-                @if (Model != null && Model.Emails != null && Model.Emails.Count > 0)
-                {
-                    for (int i = 1; i < Model.Emails.Count; i++)
-                    {
-                        <div class="row m-0 linhaEmail" style="gap:4rem; margin-top:24rem!important">
-                            <div class="d-flex justify-content-between">
-                                <label asp-for="Emails[i]" class="c-form__label form-label control-label">Email @(i + 1)</label>
-                                <a href="#" class="c-form__action repeater justify-content-end" onclick="removerEmail(this)" style="color:red!important">
-                                    <i class="icon-delete"></i> Remover
-                                </a>
-                            </div>
-
-                            <input asp-for="Emails[i]" posicao="@i" type="email" data-msg-email="E-mail Inválido !" class="c-form__input form-control">
-                            <span asp-validation-for="Emails[i]" class="form-text text-danger"></span>
-                            @if (i == Model.Telefone.Count - 1)
-                            {
-                                <a href="#" class="c-form__action repeater" onclick="adicionarEmail(this)">
-                                    <i class="icon-add"></i> Adicionar outro E-mail
-                                </a>
-                            }
-                        </div>
-                    }
-
-                }
-            </div>
-            <div class="c-form__group col-4">
-                <div class="row m-0" style="gap:4rem;">
-                    <label asp-for="Telefone[0]" class="c-form__label form-label control-label">Telefone Principal</label>
-                    <input asp-for="Telefone[0]" data-mask="(00)00009-0000" data-rule-telefone="true" posicao="0" class="c-form__input form-control maskTelefone" data-msg-required="Telefone principal obrigatório !" required>
-                    <span asp-validation-for="Telefone[0]" class="form-text text-danger"></span>
-                    <a href="#" id="addPrimeiroTelefoneSecundario" class="c-form__action repeater @(Model != null && Model.Telefone != null && Model.Telefone.Count > 1 ? "d-none": "")" onclick="adicionarTelefone(this)">
-                        <i class="icon-add"></i> Adicionar outro telefone
-                    </a>
-                </div>
-                @if (Model != null && Model.Telefone != null && Model.Telefone.Count > 0)
-                {
-                    for (int i = 1; i < Model.Telefone.Count; i++)
-                    {
-                        <div class="row m-0 linhaTelefones" style="gap:4rem; margin-top:24rem!important">
-                            <div class="d-flex justify-content-between">
-                                <label asp-for="Telefone[i]" class="c-form__label form-label control-label">Telefone @(i + 1)</label>
-                                <a href="#" class="c-form__action repeater justify-content-end" onclick="removerTelefone(this)" style="color:red!important">
-                                    <i class="icon-delete"></i> Remover
-                                </a>
-                            </div>
-
-                            <input asp-for="Telefone[i]" data-mask="(00)00009-0000" posicao="@i" class="c-form__input form-control" data-msg-required="Telefone obrigatório !">
-                            <span asp-validation-for="Telefone[i]" class="form-text text-danger"></span>
-                            @if (i == Model.Telefone.Count - 1)
-                            {
-                                <a href="#" class="c-form__action repeater" onclick="adicionarTelefone(this)">
-                                    <i class="icon-add"></i> Adicionar outro telefone
-                                </a>
-                            }
-                        </div>
-                    }
-
-                }
-
-            </div>
-
-        </div>
-
-
-
     </div>
+
+
+    <div class="row">
+        <div class="c-form__group col-12">
+            <label asp-for="Email" class="c-form__label form-label control-label"></label>
+            <input asp-for="Email" class="c-form__input form-control" required placeholder="Email" value="@Model.Email">
+            <span asp-validation-for="Nome" class="form-text text-danger"></span>
+        </div>
+    </div>
+
+
 
     <div class="c-form__btn-group">
         <input type="submit" value="Cadastrar Usuário" class="o-btn o-btn-default">
@@ -118,6 +54,7 @@
         }
 
         const modal = new bootstrap.Modal('#modalConfirmacao');
+        
         $("form").submit((e) => {
             e.preventDefault();
             $(".checkboxCBH").each((i, element) => {
@@ -125,6 +62,7 @@
                 $(element).remove();
 
             })
+
             if ($("form").valid()) {
                 let indexInicio = 0;
                 $("input[name=CBHs][type=checkbox]").each((i, element) => {

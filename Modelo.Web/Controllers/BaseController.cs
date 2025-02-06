@@ -35,11 +35,10 @@ namespace Modelo.Web.Controllers
 
             if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
-                InformarNomeECBHUsuario();
+                InformarNomeUsuario();
                 if (BuscarUsuarioIdLogado().HasValue)
                     _logServico.InformarIdUsuario(BuscarUsuarioIdLogado().Value);
             }
-
 
             base.OnActionExecuting(context);
         }
@@ -76,7 +75,7 @@ namespace Modelo.Web.Controllers
 
             if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
-                InformarNomeECBHUsuario();
+                InformarNomeUsuario();
                 if (BuscarUsuarioIdLogado().HasValue)
                     _logServico.InformarIdUsuario(BuscarUsuarioIdLogado().Value);
             }
@@ -96,7 +95,6 @@ namespace Modelo.Web.Controllers
             return null;
         }
         
-
         protected bool OperacaoValida()
         {
             if (_notificador.TemNotificacao())
@@ -113,7 +111,6 @@ namespace Modelo.Web.Controllers
             return !_notificador.TemNotificacao();
         }
 
-
         public IList<string> RecuperarListaErros()
         {
             var listaErros = new List<string>();
@@ -124,30 +121,17 @@ namespace Modelo.Web.Controllers
             return listaErros;
         }
 
-        public void InformarNomeECBHUsuario()
-        {
-            
+        public void InformarNomeUsuario()
+        {            
             var claimUsuarioId = User.Claims.FirstOrDefault(c => c.Type == "UsuarioId");
             var claimNomeUsuario = User.Claims.FirstOrDefault(c => c.Type == "NomeUsuario");
-            var claimCbhSelecionada = User.Claims.FirstOrDefault(c => c.Type == "CBHSelecionada");
-            var cbhsUsuario = User.Claims.FirstOrDefault(c => c.Type == "CBHs");
             
-
             var options = new JsonSerializerOptions { WriteIndented = true, PropertyNameCaseInsensitive = true };
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("NomeUsuario")) && claimNomeUsuario != null && claimUsuarioId != null)
             {
                 HttpContext.Session.SetString("NomeUsuario", claimNomeUsuario.Value);
                 HttpContext.Session.SetString("UsuarioId", claimUsuarioId.Value);
             }
-
-            
-
-            if (cbhsUsuario != null)
-            {
-                HttpContext.Session.SetString("CBHs", cbhsUsuario.Value);
-            }
-
-
         }
     }
 }

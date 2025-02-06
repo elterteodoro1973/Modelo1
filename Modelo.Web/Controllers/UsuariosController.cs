@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Modelo.Aplicacao.DTO.Usuarios;
 using Modelo.Aplicacao.Interfaces;
 using Modelo.Dominio.Interfaces;
 using Modelo.Dominio.Interfaces.Servicos;
+using Modelo.Dominio.Servicos;
 using Modelo.Web.Configuracoes.Claims;
 using Modelo.Web.ViewModels;
 using Modelo.Web.ViewModels.Perfis;
@@ -16,22 +18,21 @@ namespace Modelo.Web.Controllers
     public class UsuariosController : BaseController
     {
         private readonly IUsuarioAppServico _usuarioAppServico;
-        
+        private readonly IResetarSenhaServico _resetarSenhaServico;
         private readonly INotificador _notificador;
         private readonly IPerfilAppServico _perfilAppServico;
-        private readonly IMapper _mapper;
-        
-
+        private readonly IMapper _mapper; 
         private readonly IWebHostEnvironment _env;
 
-        public UsuariosController(IUsuarioAppServico usuarioAppServico, 
-            IMapper mapper, 
+        public UsuariosController(IUsuarioAppServico usuarioAppServico, IResetarSenhaServico resetarSenhaServico,
+        IMapper mapper, 
             INotificador notificador,           
             ILogServico logServico, 
             IPerfilAppServico perfilAppServico,
             IWebHostEnvironment env ) : base(notificador, logServico)
         {
             _usuarioAppServico = usuarioAppServico;
+            _resetarSenhaServico = resetarSenhaServico;
             _notificador = notificador;
             _mapper = mapper;           
             _perfilAppServico = perfilAppServico;
@@ -92,26 +93,29 @@ namespace Modelo.Web.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> CadastrarNovaSenha(Guid? token, string? email)
+        public async Task<IActionResult> CadastrarNovaSenha(string? token)
         {
-            if (!token.HasValue || token == Guid.Empty || string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email))
+            if ( token == string.Empty )
                 return BadRequest();
 
-            await _usuarioAppServico.ValidarTokenEmailCadastrarNovaSenha(token.Value, email);
+            await _usuarioAppServico.ValidarTokenCadastrarNovaSenha(token);
 
             if (!OperacaoValida())
                 return View();
 
-            var model = new CadastrarNovaSenhaViewModel { Email = email, Token = token.Value };
+            var resetarSenha = await _resetarSenhaServico.BuscarResetarSenhaPorToken(token);
+            var usuario = await _usuarioAppServico.BuscarUsuarioPorId(resetarSenha.UsuarioId);
+
+            var model = new CadastrarNovaSenhaViewModel { Email = usuario.Email, Token = token };
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> CadastrarNovaSenha(Guid? token, [Bind("Email, Token, Senha, ConfirmarSenha")] CadastrarNovaSenhaViewModel model)
+        public async Task<IActionResult> CadastrarNovaSenha(string? token, [Bind("Email, Token, Senha, ConfirmarSenha")] CadastrarNovaSenhaViewModel model)
         {
-            if (!token.HasValue || token != model.Token)
+            if (token == string.Empty || token != model.Token)
                 return BadRequest();
 
             if (!ModelState.IsValid)

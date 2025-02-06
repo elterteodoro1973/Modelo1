@@ -275,7 +275,7 @@ namespace Modelo.Aplicacao.Servicos
             await _usuarioServico.ResetarSenha(caminho, email);
         }
 
-        public async Task ValidarTokenEmailCadastrarNovaSenha(Guid token, string email)
-        => await _usuarioServico.ValidarTokenEEmailResetarSenha(token, email);
+        public async Task ValidarTokenCadastrarNovaSenha(string token)
+        => await _usuarioServico.ValidarTokenResetarSenha(token);
     }
 }

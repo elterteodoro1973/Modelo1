@@ -5,35 +5,46 @@
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <section class="c-login">
     <article action="" class="c-login__box">
         <header class="c-login__header">
-            <img src="~/imagens/main/logo-daee.png" alt="Logo do DAEE" />
-            <h2 class="c-login__title"> Sistema de Cobrança de Recursos Hídricos do Estado de São Paulo </h2>
+            <img src="~/imagens/main/logo-daee.png" alt="Logo do DAEE" /><br /><br />
+            <h2 class="c-login__title"> Sistema de modelo </h2>
         </header>
-        <form asp-action="CadastrarNovaSenha" class="c-login__form">
+
+        <form asp-action="CadastrarNovaSenha" class="c-login__form" method="post" onsubmit=" return validaPostar()">
             <h3 class="c-login__form--title"> Cadastrar nova senha </h3>
 
             <div class="c-login__form--fieldset">
-                <div asp-validation-summary="All" class="text-danger justify-content-start"></div>
+                <div asp-validation-summary="All" id="ValidadorSumario" name="ValidadorSumario" class="text-danger center-content-start"></div>
                 <input type="hidden" asp-for="Token" />
                 <input type="hidden" asp-for="Email" />
-                <div class="c-form__group form-group">
-                    <label asp-for="Email" class="c-form__label form-label control-label"></label>
-                    <input type="text" disabled readony value="@(Model != null ? Model.Email : "")" class="c-form__input form-control">
-                    <span asp-validation-for="Email" class="form-text text-danger"></span>
-                </div>
-                <div class="c-form__group form-group">
-                    <label asp-for="Senha" class="c-form__label form-label control-label"></label>
-                    <input asp-for="Senha" class="c-form__input form-control" placeholder="Digite seu e-mail">
-                    <span asp-validation-for="Senha" class="form-text text-danger"></span>
-                </div>
-                <div class="c-form__group form-group">
-                    <label asp-for="ConfirmarSenha" class="c-form__label form-label control-label"></label>
-                    <input asp-for="ConfirmarSenha" class="c-form__input form-control" placeholder="Digite seu e-mail">
-                    <span asp-validation-for="ConfirmarSenha" class="form-text text-danger"></span>
-                </div>
-                <input type="submit" value="Salvar" class="o-btn o-btn--full o-btn-default">
+                
+
+                @if (Model != null && Model.Email != null)
+                {
+                    <div class="c-form__group form-group">
+                        <label asp-for="Email" class="c-form__label form-label control-label"></label>
+                        <input type="text" disabled readony value="@(Model != null ? Model.Email : "")" class="c-form__input form-control">
+                        <span asp-validation-for="Email" class="form-text text-danger"></span>
+                    </div>
+
+                    <div class="c-form__group form-group">
+                        <label asp-for="Senha" class="c-form__label form-label control-label"></label>
+                        <input asp-for="Senha" class="c-form__input form-control" placeholder="Digite seu e-mail" maxlength="30">
+                        <span asp-validation-for="Senha" id="SenhaValida" name="SenhaValida" class="form-text text-danger"></span>
+                    </div>
+                    <div class="c-form__group form-group">
+                        <label asp-for="ConfirmarSenha" class="c-form__label form-label control-label"></label>
+                        <input asp-for="ConfirmarSenha" class="c-form__input form-control" placeholder="Digite seu e-mail" maxlength="30">
+                        <span asp-validation-for="ConfirmarSenha" id="ConfirmarSenhaValida" name="ConfirmarSenhaValida" class="form-text text-danger"></span>
+                    </div>
+                    <input type="submit" value="Salvar" class="o-btn o-btn--full o-btn-default">
+                }
             </div>
         </form>
     </article>
@@ -42,6 +53,23 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/usuario.js"></script>
+    }
+}
+
+<script>
+    function validaPostar() { 
+      document.getElementById("ValidadorSumario").innerHTML = "";
+      document.getElementById("SenhaValida").innerHTML = "";
+      document.getElementById("ConfirmarSenhaValida").innerHTML = "";
+
+      var senha = document.getElementById("Senha");
+      if(!senhaForte(senha.value)){
+         document.getElementById("ValidadorSumario").innerHTML = "A senha não atende os requisitos da política de senha:</br> ter no minímo de 6 caracteres,letras maiúsculas e</br> minúsculas,usar números e símbolos como: '!#$%¨&*+'.";
+         return false;
+      }
+      
+      return true;
     }
 
-    }
+</script>

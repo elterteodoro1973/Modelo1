@@ -5,45 +5,7 @@ $('#horasMedia, .horas').mask('99,00');
 
 $('#diasMedia, .dias').mask('99,00');
 
-$('#vazaoMedia, .vazao').mask('999.999.999,99', { reverse: true });
 
-$('#vazaoMedia').on('blur', function ()
-{
-    SetValores();
-
-    /*console.log("valor #vazaoMedia " + $(this).val());*/
-    var vazaoMediaFormatada = $(this).val().replace('.', ',');   
-
-    if (vazaoMediaFormatada.indexOf(",") == -1)
-    {
-        vazaoMediaFormatada = vazaoMediaFormatada + ",00";
-        /*console.log("valor #vazaoMedia com +0,00: " + vazaoMediaFormatada);*/
-    }
-
-    $(this).val(vazaoMediaFormatada);
-
-    //console.log("valor #vazaoMedia de html " + $(this).val());
-    //console.log("valor vazaoMediaFormatada " + $(this).val());
-
-    $('.vazao').val(vazaoMediaFormatada);
-
-    AtualizarVolumes();
-});
-
-$('.vazao').on('blur', function ()
-{
-    SetValores();
-
-    var vazaoMediaFormatada = $(this).val().replace('.', ',');
-
-    if (vazaoMediaFormatada.indexOf(",") == -1) {
-        vazaoMediaFormatada = vazaoMediaFormatada + ",00";
-    }
-
-    $(this).val(vazaoMediaFormatada);
-
-    AtualizarVolumes();
-});
 
 $('.horas').on('blur', function ()
 {
@@ -64,7 +26,6 @@ $('.horas').on('blur', function ()
 
     $(this).val(horasMediaFormatada);
 
-    AtualizarVolumes();
 });
 
 $('#horasMedia').on('blur', function ()
@@ -87,7 +48,6 @@ $('#horasMedia').on('blur', function ()
     $(this).val(horasMediaFormatada);
     $('.horas').val(horasMediaFormatada);
 
-    AtualizarVolumes();
 });
 
 $('#diasMedia').on('keyup', function ()
@@ -98,8 +58,6 @@ $('#diasMedia').on('keyup', function ()
     if (dia < 0 || dia > 31) {
         $(this).val('31');
     }
-
-    AtualizarVolumes();
 });
 
 $('#diasMedia').on('blur', function () {
@@ -123,7 +81,7 @@ $('.dias').on('keyup', function ()
 $('.vazao, .horas').on('input', function ()
 {
     SetValores();
-    AtualizarVolumes();
+   
 });
 function SetValores()
 {
@@ -132,50 +90,13 @@ function SetValores()
         $('#horasMedia').val("0,00");
     }
 
-    if ($('#vazaoMedia').val() == null || $('#vazaoMedia').val() == "")
-    {
-        $('#vazaoMedia').val("0,00");
-    }   
+   
 
     if ($('#diasMedia').val() == null || $('#diasMedia').val() == "")
     {
         $('#diasMedia').val("30");
     }
-    //AtualizarVolumes();
-}
-
-function AtualizarVolumes()
-{ 
-   const formatador = new Intl.NumberFormat('pt-BR',
-        {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 2
-        });
-
-    SetValores();
-
-    var volumeTotal = parseFloat(0);
-
-    for (let mes = 1; mes <= 12; mes++)
-    {
-        var valorVazao = $('#vazao-mes-' + mes).val().replace(",", ".");
-        var valorHoras = $('#horas-mes-' + mes).val().replace(',', '.');
-        var valorDias  = $('#dias-mes-' + mes).val().replace(".", "").replace(",", "");
-
-        var vazao = valorVazao === "" ? 0 : parseFloat(valorVazao);
-        var horas = valorHoras === "" ? 0 : parseFloat(valorHoras);
-        var dias =  valorDias  === "" ? 0 : parseFloat(valorDias);
-
-        var volume = (vazao * horas * dias);
-        var volumeFormatado = formatador.format(volume).replace("R$", "");
-        volumeTotal = parseFloat(volumeTotal) + parseFloat(volume);
-        $('#volume-' + mes).html(volumeFormatado);
-    }
-
-    var totalFormatado = formatador.format(volumeTotal).replace("R$", "");
-
-    $('#volumeTotal').html(totalFormatado);
+    /
 }
 
 function AjustarDiasMes()
@@ -231,45 +152,9 @@ function alterarProgressBar(elementId, novoValor)
     progressBar.setAttribute('aria-valuenow', novoValor);
     progressBar.innerHTML = novoValor + '%';
 }
-function AtualizarBarrPorcentagem()
-{
-    var totalCobravel = 0;
-    var totalNaoCobravel = 0;
 
-    $('.item').each(function ()
-    {
-        var id = $(this).find(".finalidade").val();
-        var valor = $(this).find(".porcentagem").val();
-        if (valor === '') {
-            valor = '0,00';
-        }
-        var porcentagem = parseFloat(valor.replace(',', '.'));
 
-        var select = $(this).find(".finalidade");
-        var selectedOption = select.find('option:selected');
 
-        if (selectedOption.hasClass("cobravel"))
-        {
-            totalCobravel = totalCobravel + porcentagem;
-        }
-        else if (selectedOption.hasClass("naocobravel"))
-        {
-            totalNaoCobravel = totalNaoCobravel + porcentagem;
-        }
-    });
-
-    var totalNaoAtribuido = 100 - (totalCobravel + totalNaoCobravel);
-
-    alterarProgressBar('barraCobravel', totalCobravel.toFixed(2));
-    alterarProgressBar('barraNaoCobravel', totalNaoCobravel.toFixed(2));
-    alterarProgressBar('barraNaoAtribuido', totalNaoAtribuido.toFixed(2));
-}
-
-$(".finalidade").on("change", function ()
-{
-    AtualizarBarrPorcentagem();
-    EsconderFinalidadesSelecionadas();
-});
 
 $('.porcentagem').mask('000,00', {
     reverse: true,
@@ -283,7 +168,7 @@ $('.porcentagem').on('blur', function ()
 
     if (valor === '')
     {
-        AtualizarBarrPorcentagem();
+        
         return;
     }
 
@@ -313,7 +198,7 @@ $('.porcentagem').on('blur', function ()
         $(this).val(valor + ',00');
     }
 
-    AtualizarBarrPorcentagem();
+    
 });
 function TotalPorcentagem()
 {
@@ -332,33 +217,9 @@ function TotalPorcentagem()
 
     return total.toFixed(2);
 }
-function EsconderFinalidadesSelecionadas()
-{
-    $('.finalidade').each(function ()
-    {
-        $(this).find('option').css('display', 'block');
-    });
 
-    $('.finalidade').each(function ()
-    {
-        var id = $(this).val();
-        $('.finalidade').each(function ()
-        {
-            if (id !== $(this).val()) 
-            {
-                $(this).find('option[value="' + id + '"]').css('display', 'none');
-            }
-
-        });
-    });
-}
 
 $(document).ready(() =>
 {
-
-    EsconderFinalidadesSelecionadas()
-    AtualizarBarrPorcentagem();
     SetValores();
-    AtualizarVolumes();
-    $('#usosEmpreendimento').parent().addClass('ativo');
 });

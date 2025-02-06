@@ -1,4 +1,6 @@
-﻿function adicionarTelefone(elemento) {
+﻿const { left } = require("@popperjs/core");
+
+function adicionarTelefone(elemento) {
     let posicao = Number($(elemento).parent().find("input").attr("posicao"));
     let elementoPrincipal = $(elemento).parent().parent();
     posicao++;
@@ -88,7 +90,6 @@ function removerEmail(elemento) {
         $("#addPrimeiroTelefoneSecundario").addClass("d-none");
     }
 }
-
 
 function adicionarEndereco(elemento) {
     let posicao = Number($(elemento).closest(".c-form__group").find("select").attr("posicao"));
@@ -188,7 +189,6 @@ function adicionarEndereco(elemento) {
     })
     $(elemento).remove();
 }
-
 
 function buscarCep(elemento) {
     let cep = $(elemento).parent().find("input").val();
@@ -291,4 +291,48 @@ function removerEndereco(elemento) {
         $(e).find(".spanMunicipio").attr("data-valmsg-for", `Enderecos[${novaPosicao}].Municipio`);
     })
 }
+
+function senhaForte(p) {
+    if (p.length < 6) {
+        return retorno;
+    }
+
+    if (p.length > 30) {
+        return retorno;
+    }
+
+    let retorno = false;
+    let auxMaiuscula = 0;
+    let auxMinuscula = 0;
+    let auxNumero = 0;
+    let auxEspecial = 0;
+
+    let letrasMaiusculas = /[A-Z]/;
+    let letrasMinusculas = /[a-z]/;
+    let numeros = /[0-9]/;
+    let caracteresEspeciais = /[!|@|#|$|%|^|&|*|(|)|-|_]/;
+    
+    for (var i = 0; i < p.length; i++) {
+        if (letrasMaiusculas.test(p[i]))
+            auxMaiuscula++;
+        else if (letrasMinusculas.test(p[i]))
+            auxMinuscula++;
+        else if (numeros.test(p[i]))
+            auxNumero++;
+        else if (caracteresEspeciais.test(p[i]))
+            auxEspecial++;
+    }
+
+    if (auxMaiuscula > 0) {
+        if (auxMinuscula > 0) {
+            if (auxNumero > 0) {
+                if (auxEspecial) {
+                    retorno = true;
+                }
+            }
+        }
+    }
+
+    return retorno;
+}	
 

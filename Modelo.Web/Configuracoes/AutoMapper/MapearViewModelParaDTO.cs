@@ -7,14 +7,19 @@ using Modelo.Web.ViewModels.Usuarios;
 
 namespace Modelo.Web.Configuracoes.AutoMapper
 {
-    public class PerfilMapeamentoViewModelParaDTO : Profile
+    public class MapearViewModelParaDTO : Profile
     {
-        public PerfilMapeamentoViewModelParaDTO()
+        public MapearViewModelParaDTO()
         {
-            CreateMap<CadastrarEditarUsuarioViewModel, CadastrarEditarUsuarioDTO>();
-            //CreateMap<EnderecoViewModel, EnderecoCadastroUsuarioDTO>();
-            CreateMap<CadastrarNovaSenhaViewModel, CadastrarNovaSenhaDTO>();
+            CreateMap<CadastrarEditarUsuarioViewModel, CadastrarEditarUsuarioDTO>();            
             
+            
+            CreateMap<CadastrarNovaSenhaViewModel, CadastrarNovaSenhaDTO>()
+               .ForMember(c => c.Email, m => m.MapFrom(c => c.Email))
+               .ForMember(c => c.Token, m => m.MapFrom(c => c.Token))
+               .ForMember(c => c.Senha, m => m.MapFrom(c => c.Senha))
+               .ForMember(c => c.ConfirmarSenha, m => m.MapFrom(c => c.ConfirmarSenha));
+
             CreateMap<PerfilViewModel, PerfilDTO>()
                 .ForMember(c => c.Id, m =>
                 {

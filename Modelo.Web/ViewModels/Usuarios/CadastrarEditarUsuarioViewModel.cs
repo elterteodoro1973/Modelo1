@@ -15,9 +15,8 @@ namespace Modelo.Web.ViewModels.Usuarios
         [StringLength(14, MinimumLength = 14, ErrorMessage = "{0} Inválido !")]
         [CustomValidationCPF(ErrorMessage = "CPF inválido")]
         public string CPF { get; set; } = null!;
-        public IList<string> Emails { get; set; } = null!;
-        public IList<string> Telefone { get; set; } = null!;
-        
+
+        public string Email { get; set; } = null!;
         public bool UsuarioAtivo { get; set; } = true;
     }
 }

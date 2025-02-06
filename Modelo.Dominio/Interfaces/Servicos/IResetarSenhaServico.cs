@@ -6,5 +6,6 @@ namespace Modelo.Dominio.Interfaces.Servicos
     {    
         Task Adicionar(ResetarSenha resetarSenha);        
         Task Excluir(Guid usuarioId);
+        Task<ResetarSenha?> BuscarResetarSenhaPorToken(string token);
     }
 }

@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTO\Relatorios\**" />
     <Compile Remove="Enums\**" />
+    <EmbeddedResource Remove="DTO\Relatorios\**" />
     <EmbeddedResource Remove="Enums\**" />
+    <None Remove="DTO\Relatorios\**" />
     <None Remove="Enums\**" />
   </ItemGroup>
 
@@ -19,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Modelo.Dominio\Modelo.Dominio.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTO\Relatorios\" />
   </ItemGroup>
 
 </Project>

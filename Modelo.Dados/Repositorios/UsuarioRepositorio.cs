@@ -52,7 +52,7 @@ namespace Modelo.Dados.Repositorios
         }
 
         public async Task<Usuarios?> BuscarPorEmail(string email)
-        => await _contexto.Usuarios.Where(c => !c.Excluido.Value && c.Email == email.ToUpper()).AsNoTracking().FirstOrDefaultAsync();
+        => await _contexto.Usuarios.Include(c=>c.Perfil).Where(c => !c.Excluido.Value && c.Email == email.ToUpper()).AsNoTracking().FirstOrDefaultAsync();
 
         public async Task<bool> EmailValidoLogin(string email)
         => await _contexto.Usuarios.Where(c => !c.Excluido.Value && !c.Inativo && c.Email == email.ToUpper().Trim()).AnyAsync();

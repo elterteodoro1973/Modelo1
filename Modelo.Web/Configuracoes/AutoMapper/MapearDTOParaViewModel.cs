@@ -8,20 +8,24 @@ using Modelo.Web.ViewModels.Usuarios;
 
 namespace Modelo.Web.Configuracoes.AutoMapper
 {
-    public class PerfilMapeamentoDTOParaViewModel : Profile
+    public class MapearDTOParaViewModel : Profile
     {
-        public PerfilMapeamentoDTOParaViewModel()
+        public MapearDTOParaViewModel()
         {
             CreateMap<UsuariosTelaInicialDTO, UsuariosViewModel>();
             CreateMap<CadastrarEditarUsuarioDTO, CadastrarEditarUsuarioViewModel>();
-            //CreateMap<EnderecoCadastroUsuarioDTO, EnderecoViewModel>();
+
+            CreateMap<CadastrarNovaSenhaDTO, CadastrarNovaSenhaViewModel>()
+               .ForMember(c => c.Email, m => m.MapFrom(c => c.Email))
+               .ForMember(c => c.Token, m => m.MapFrom(c => c.Token))
+               .ForMember(c => c.Senha, m => m.MapFrom(c => c.Senha))
+               .ForMember(c => c.ConfirmarSenha, m => m.MapFrom(c => c.ConfirmarSenha));
+
             CreateMap<LogTransacoesDTO, LogViewModel>()
-                .ForMember(c => c.DataFormatada, m =>
-                {
-                    m.MapFrom(c => c.Data.ToString("dd/MM/yyyy HH:mm:ss"));
-                });
-
-
+               .ForMember(c => c.DataFormatada, m =>
+               {
+                   m.MapFrom(c => c.Data.ToString("dd/MM/yyyy HH:mm:ss"));
+               });
 
             CreateMap<SelectOptionDTO, SelectOptionViewModel>();
 

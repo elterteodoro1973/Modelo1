@@ -25,7 +25,8 @@ namespace Modelo.Infraestrutura.CrossCutting.IoC
 
         public static void ConfigurarAutoMapper(this IServiceCollection services)
         {
-           services.AddAutoMapper(typeof(PerfilMapeamentoEntidadeParaDTO), typeof(PerfilMapeamentoDTOParaEntidade));
+           services.AddAutoMapper(typeof(MapeamentoEntidadeParaDTO), typeof(MapeamentoDTOParaEntidade));
+           services.AddAutoMapper(typeof(MapeamentoDTOParaEntidade), typeof(MapeamentoEntidadeParaDTO));
         }
 
         public static void ConfigurarServicosERepositorios(this IServiceCollection services)
