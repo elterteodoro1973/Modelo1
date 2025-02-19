@@ -40,11 +40,9 @@ namespace Modelo.Aplicacao.Servicos
         public async Task Cadastrar(string caminho, CadastrarEditarUsuarioDTO dto)
         {
             if (!string.IsNullOrEmpty(dto.CPF) && !string.IsNullOrWhiteSpace(dto.CPF))
-                dto.CPF = dto.CPF.Replace(".", "").Replace("-", "");
+                dto.CPF = dto.CPF.Replace(".", "").Replace("-", "").Replace("/", "");
 
-
-            var usuario = _mapper.Map<Usuarios>(dto);
-           
+            var usuario = _mapper.Map<Usuarios>(dto);           
 
             await _usuarioServico.Adicionar(caminho, usuario);
         }

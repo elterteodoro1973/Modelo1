@@ -7,8 +7,10 @@
 <h1 class="o-title"> CADASTRAR USUÁRIO </h1>
 <partial name="~/Views/Shared/_Avisos.cshtml" />
 <form asp-action="Adicionar" method="post" class="c-form">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
     <div class="c-form__section">
-        <span class="c-form__section--label">Dados gerais</span>
+        <span class="c-form__section--label">Dados gerais</span>       
+        
         <div class="row">
             <div class="c-form__group col-8">
                 <label asp-for="Nome" class="c-form__label form-label control-label"></label>
@@ -22,18 +24,22 @@
             </div>
         </div>
 
-    </div>
+        <div class="row">
+            <div class="c-form__group col-8">
+                <label asp-for="Email" class="c-form__label form-label control-label"></label>
+                <input asp-for="Email" class="c-form__input form-control" data-rule-email="true" required placeholder="Email">
+                <span asp-validation-for="Email" class="form-text text-danger"></span>
+            </div>
 
-
-    <div class="row">
-        <div class="c-form__group col-12">
-            <label asp-for="Email" class="c-form__label form-label control-label"></label>
-            <input asp-for="Email" class="c-form__input form-control" required placeholder="Email" value="@Model.Email">
-            <span asp-validation-for="Nome" class="form-text text-danger"></span>
+            <div class="c-form__group col-4">
+                <label asp-for="PerfilId" class="c-form__label"></label>
+                <select asp-for="PerfilId" required class="c-form__input c-form__input--select" asp-items="ViewBag.ListaPerfis">
+                    <option value="" selected disabled>Selecione ...</option>
+                </select>
+                <span asp-validation-for="PerfilId" class="form-text text-danger"></span>
+            </div>
         </div>
-    </div>
-
-
+    </div>    
 
     <div class="c-form__btn-group">
         <input type="submit" value="Cadastrar Usuário" class="o-btn o-btn-default">

@@ -14,7 +14,6 @@ namespace Modelo.Web.Configuracoes.AutoMapper
         {
             CreateMap<UsuariosTelaInicialDTO, UsuariosViewModel>();
             CreateMap<CadastrarEditarUsuarioDTO, CadastrarEditarUsuarioViewModel>();
-
             CreateMap<CadastrarNovaSenhaDTO, CadastrarNovaSenhaViewModel>()
                .ForMember(c => c.Email, m => m.MapFrom(c => c.Email))
                .ForMember(c => c.Token, m => m.MapFrom(c => c.Token))

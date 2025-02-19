@@ -10,27 +10,35 @@
     <input type="hidden" asp-for="Id" value="@Model.Id" />
     
     <div class="c-form__section">
-        <span class="c-form__section--label">Dados gerais</span>
+        <span class="c-form__section--label">Dados gerais</span>       
 
         <div class="row">
             <div class="c-form__group col-8">
                 <label asp-for="Nome" class="c-form__label form-label control-label"></label>
-                <input asp-for="Nome" class="c-form__input form-control" required placeholder="Nome Completo" value="@Model.Nome">
+                <input asp-for="Nome" class="c-form__input form-control" required placeholder="Nome Completo">
                 <span asp-validation-for="Nome" class="form-text text-danger"></span>
             </div>
             <div class="c-form__group col-4">
                 <label asp-for="CPF" class="c-form__label form-label control-label"></label>
-                <input asp-for="CPF" data-mask="000.000.000-00" data-mask-reverse="true" required data-rule-cpf="true" class="c-form__input form-control maskCPF" value="@Model.CPF">
+                <input asp-for="CPF" data-mask="000.000.000-00" data-mask-reverse="true" data-rule-cpf="true" required class="c-form__input form-control maskCPF">
                 <span asp-validation-for="CPF" class="form-text text-danger"></span>
             </div>
         </div>
 
         <div class="row">
-            <div class="c-form__group col-12">
+            <div class="c-form__group col-8">
                 <label asp-for="Email" class="c-form__label form-label control-label"></label>
-                <input asp-for="Email" class="c-form__input form-control" required placeholder="Email" value="@Model.Email">
-                <span asp-validation-for="Nome" class="form-text text-danger"></span>
-            </div>  
+                <input asp-for="Email" class="c-form__input form-control" data-rule-email="true" required placeholder="Email">
+                <span asp-validation-for="Email" class="form-text text-danger"></span>
+            </div>
+
+            <div class="c-form__group col-4">
+                <label asp-for="PerfilId" class="c-form__label"></label>
+                <select asp-for="PerfilId" required class="c-form__input c-form__input--select" asp-items="ViewBag.ListaPerfis">
+                    <option value="" selected disabled>Selecione ...</option>
+                </select>
+                <span asp-validation-for="PerfilId" class="form-text text-danger"></span>
+            </div>
         </div>
 
     </div>
@@ -40,17 +48,17 @@
         <input type="button" value="Cancelar" class="o-btn o-btn-alt" onclick="paginaInicial()">
         <div class="c-form__group col-auto">
             <label class="c-form__label c-form__switch justify-content-end">
-                @if (Model.UsuarioAtivo == null)
+                @if (Model.UsuarioAtivo)
                 {
                     <input asp-for="UsuarioAtivo" value="false" type="checkbox" class="form-control" />
                     <span class="c-form__switch-slider"></span>
-                    @Html.Raw("Usuário Ativo ?")
+                    @Html.Raw("Usuário ativo ?")
                 }
                 else
                 {
                     <input asp-for="UsuarioAtivo" type="checkbox" class="form-control" />
                     <span class="c-form__switch-slider"></span>
-                    @Html.Raw("Usuário Ativo ?")
+                    @Html.Raw("Usuário ativo ?")
                 }
             </label>
         </div>
@@ -74,20 +82,9 @@
         const modal = new bootstrap.Modal('#modalConfirmacao');
         $("form").submit((e) => {
             e.preventDefault();
-            $(".checkboxCBH").each((i, element) => {
-
-                $(element).remove();
-
-            })
+            
             if ($("form").valid()) {
-                let indexInicio = 0;
-                $("input[name=CBHs][type=checkbox]").each((i, element) => {
-                    if ($(element).is(":checked")) {
-                        let valor = $(element).val();
-                        $("<input>").attr("type", "hidden").attr("name", `CBHs[${indexInicio}]`).addClass("checkboxCBH").val(valor).appendTo($("form"));
-                        indexInicio++;
-                    }
-                });
+              
 
                 $(".modal-body").html("<p class='lh-base'>Deseja confirmar as alterações do cadastro do usuário?</p>")
 
@@ -102,10 +99,7 @@
         });
 
         $(document).ready(() => {
-            $("input[name=CBHs][type=checkbox]:checked").each((i, e) => {
-                let valor = $(e).val();
-                $("<input>").attr("type", "hidden").attr("name", `CBHs[${i}]`).addClass("checkboxCBH").val(valor).appendTo($("form"));
-            })
+          
         })
     </script>
     }

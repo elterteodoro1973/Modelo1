@@ -24,8 +24,17 @@ namespace Modelo.Dados.Repositorios
         }
 
         public async Task<IList<Usuarios>> BuscarUsuariosSemRastreio()
-        => await _contexto.Usuarios.Where(c => !c.Excluido.Value).AsNoTracking().ToListAsync();
+        => await _contexto.Usuarios.Include(c => c.Perfil).Where(c => !c.Excluido.Value).AsNoTracking().ToListAsync();
 
+        public async Task<bool> NomePrincipalJaCadastrado(string nome, Guid? id)
+        {
+            return await _contexto.Usuarios.Where(c => !c.Excluido.Value && c.NomeCompleto == nome.ToUpper() && (id.HasValue ? c.Id != id : true)).AnyAsync();
+        }
+
+        public async Task<bool> CPFPrincipalJaCadastrado(string cpf, Guid? id)
+        {
+            return await _contexto.Usuarios.Where(c => !c.Excluido.Value && c.CPF == cpf.ToUpper() && (id.HasValue ? c.Id != id : true)).AnyAsync();
+        }
         public async Task<bool> EmailPrincipalJaCadastrado(string email, Guid? id)
         {
             return await _contexto.Usuarios.Where(c => !c.Excluido.Value && c.Email == email.ToUpper() && (id.HasValue ? c.Id != id : true)).AnyAsync();
@@ -46,7 +55,6 @@ namespace Modelo.Dados.Repositorios
 
             if (usuario == null)
                 return null;
-
           
             return usuario;
         }

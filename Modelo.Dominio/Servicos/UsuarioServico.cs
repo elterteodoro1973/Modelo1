@@ -54,42 +54,44 @@ namespace Modelo.Dominio.Servicos
         {
             await _ValidarInclusao(usuario);
 
-            if (_notificador.TemNotificacao()) return;
-            
+            if (_notificador.TemNotificacao()) return;            
 
             await _usuarioRepositorio.IniciarTransacao();
+            await _resetarSenhaRepositorio.IniciarTransacao();
 
-            //try
-            //{
-            //    await _usuarioRepositorio.Adicionar(usuario);
+            try
+            {
+                usuario.Id = Guid.NewGuid();
+                await _usuarioRepositorio.Adicionar(usuario);
 
-            //    var historico = new HistoricoSenhaUsuario
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        DataSolicitacao = DateTime.Now,
-            //        DataExpiracao = DateTime.Now.AddDays(3),
-            //        UsuarioId = usuario.Id,
-            //        Token = Guid.NewGuid()
-            //    };
+                await _usuarioRepositorio.SalvarAlteracoes();
+                await _usuarioRepositorio.Commit();
 
-            //    await _historicoSenhaUsuarioRepositorio.Adicionar(historico);
+                var token = Guid.NewGuid();
+                ResetarSenha resetarSenhaDB = new ResetarSenha()
+                {
+                    Id = Guid.NewGuid(),
+                    Token = GerarHash512(token.ToString()).Replace("/", "b").Replace("=", "a").Replace("+", "C"),
+                    UsuarioId = usuario.Id,
+                    DataSolicitacao = DateTime.Now,
+                    DataExpiracao = DateTime.Now.AddHours(24),
+                    Excluido = false
+                };
+                await _resetarSenhaRepositorio.Adicionar(resetarSenhaDB, "ResetarSenha", usuario.Id);
 
-            //    var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token={historico.Token}&email={usuario.EmailLogin}");
+                var urlResetSenha = string.Concat(_httpContext.HttpContext.Request.Scheme, "://", _httpContext.HttpContext.Request.Host.Value, $"/Usuarios/CadastrarNovaSenha?token={resetarSenhaDB.Token}");
+                string textoEmail = _emailServico.GetCredenciasPrimeiroAcesso(caminho, usuario.NomeCompleto, urlResetSenha);
+                await _emailServico.Enviar(usuario.Email, "Cadastrar Senha!", textoEmail);
 
-            //    //string textoEmail = $"Link para cadastrar uma nova Senha: {urlResetSenha}";
-
-            //    string textoEmail = _emailServico.GetTextoResetSenha(caminho, usuario.NomeCompleto, urlResetSenha);
-            //    await _emailServico.Enviar(usuario.EmailLogin, "Cadastrar Senha!", textoEmail);
-
-
-            //    await _usuarioRepositorio.SalvarAlteracoes();
-            //    await _usuarioRepositorio.Commit();
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _usuarioRepositorio.Roolback();
-            //    _notificador.Adicionar(new Notificacao("Erro ao adicionar o Usuario !" + ex.Message));
-            //}
+                await _resetarSenhaRepositorio.SalvarAlteracoes();
+                await _resetarSenhaRepositorio.Commit();
+            }
+            catch (Exception ex)
+            {
+                await _usuarioRepositorio.Roolback();
+                await _resetarSenhaRepositorio.Roolback();
+                _notificador.Adicionar(new Notificacao("Erro ao adicionar o Usuario !" + ex.Message));
+            }
         }
 
         public async Task Editar(Usuarios usuario)
@@ -193,18 +195,30 @@ namespace Modelo.Dominio.Servicos
 
             if (_notificador.TemNotificacao()) return;
                         
+            if (await _usuarioRepositorio.NomePrincipalJaCadastrado(usuario.NomeCompleto, null))
+                _notificador.Adicionar(new Notificacao("Nome do usuário já cadastrado !"));
+
+            if (await _usuarioRepositorio.CPFPrincipalJaCadastrado(usuario.CPF, null))
+                _notificador.Adicionar(new Notificacao("CPF do usuário já cadastrado !"));
+
             if (await _usuarioRepositorio.EmailPrincipalJaCadastrado(usuario.Email, null))
-                _notificador.Adicionar(new Notificacao("E-mail principal já cadastrado !"));
+                _notificador.Adicionar(new Notificacao("E-mail do usuário já cadastrado !"));
+
         }
 
         private async Task _ValidarEdicao(Usuarios usuario)
         {
-            //if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(true), usuario)) return;
+            if (!ExecutarValidacao<CadastrarEditarUsuarioValidacao, Usuarios>(new CadastrarEditarUsuarioValidacao(true), usuario)) return;
               
             if (_notificador.TemNotificacao()) return;
 
+            if (await _usuarioRepositorio.NomePrincipalJaCadastrado(usuario.NomeCompleto,usuario.Id))
+                _notificador.Adicionar(new Notificacao("Nome do usuário já cadastrado !"));
 
-            if (await _usuarioRepositorio.EmailPrincipalJaCadastrado(usuario.Email, usuario.Id))
+            if (await _usuarioRepositorio.CPFPrincipalJaCadastrado(usuario.CPF,usuario.Id))
+                _notificador.Adicionar(new Notificacao("CPF do usuário já cadastrado !"));
+
+            if (await _usuarioRepositorio.EmailPrincipalJaCadastrado(usuario.Email,usuario.Id))
                 _notificador.Adicionar(new Notificacao("E-mail principal já cadastrado !"));
         }
 

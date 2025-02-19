@@ -54,6 +54,33 @@
         return true;
     }
 
+    function validaEmail(value) {
+       var codeArroba = String.fromCharCode(64);
+       usuario = value.substring(0, value.indexOf(codeArroba));
+       dominio = value.substring(value.indexOf(codeArroba) + 1, value.length);
+
+       if ((usuario.length >= 1) && (usuario.search(" ") == -1) && (usuario.search(codeArroba) == -1) &&
+           (dominio.length >= 3) && (dominio.search(codeArroba) == -1) && (dominio.search(" ") == -1) &&
+           (dominio.search(".") != -1) && (dominio.indexOf(".") >= 1) && (dominio.lastIndexOf(".") < dominio.length - 1))    {
+
+
+           return true;
+           //var validadorEmail = "^\w+([.-_+]?\w+)*"+codeArroba+"\w+([.-]?\w+)*(\.\w{2,10})+$";
+           //alert(validadorEmail);
+           // var validadorEmail = /^\w+([.-_+]?\w+)*\w+([.-]?\w+)*(\.\w{2,10})+$/;
+
+           // if (validadorEmail.test(value)) {
+           //     return true;
+           // } else {
+           //     return false;
+           // }
+       }
+       else {
+           return false;
+       }
+    }
+
+
     $.validator.addMethod("cpf", function (value, element, param) {
         return validaCPF(value);
     }, "CPF inválido");
@@ -63,5 +90,10 @@
         return validaTelefone(value);
     }, "Telefone inválido");
     $.validator.unobtrusive.adapters.addBool("telefone");
+
+    $.validator.addMethod("email", function (value, element, param) {
+        return validaEmail(value);
+    }, "Email inválido");
+    $.validator.unobtrusive.adapters.addBool("email");
 
 </script>

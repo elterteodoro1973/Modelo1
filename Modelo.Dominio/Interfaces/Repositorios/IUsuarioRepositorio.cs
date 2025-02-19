@@ -19,6 +19,8 @@ namespace Modelo.Dominio.Interfaces.Repositorios
         Task<bool> EmailValidoLogin(string email);
         Task<bool> UsuarioNaoPossuiSenhaCadastrada(string email);
         Task<bool> SenhaValidaLogin(string email, string senha);
+        Task<bool> NomePrincipalJaCadastrado(string nome, Guid? id);
+        Task<bool> CPFPrincipalJaCadastrado(string cpf, Guid? id);
         Task<bool> EmailPrincipalJaCadastrado(string email, Guid? id);
         Task<bool> IdUsuarioValido(Guid id);
         Task<bool> VerficarSeUsuarioEAdmDAEE(Guid usuarioId);

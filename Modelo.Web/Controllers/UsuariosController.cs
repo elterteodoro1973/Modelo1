@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Modelo.Aplicacao.DTO.Perfis;
 using Modelo.Aplicacao.DTO.Usuarios;
 using Modelo.Aplicacao.Interfaces;
 using Modelo.Dominio.Interfaces;
 using Modelo.Dominio.Interfaces.Servicos;
-using Modelo.Dominio.Servicos;
 using Modelo.Web.Configuracoes.Claims;
 using Modelo.Web.ViewModels;
 using Modelo.Web.ViewModels.Perfis;
@@ -134,14 +135,17 @@ namespace Modelo.Web.Controllers
         }
 
         public async Task<IActionResult> Adicionar()
-        {            
-            return View();
+        {
+            await ListarPerfis();
+            return View(new CadastrarEditarUsuarioViewModel() {Id = Guid.NewGuid() });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Adicionar([Bind("Nome, CPF, Emails, Telefone, Enderecos, CBHs, CBHPrincipal")] CadastrarEditarUsuarioViewModel model)
-        { 
+        public async Task<IActionResult> Adicionar([Bind("Nome, CPF, Email,PerfilId")] CadastrarEditarUsuarioViewModel model)
+        {
+            await ListarPerfis();
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -154,11 +158,13 @@ namespace Modelo.Web.Controllers
 
             TempData["Sucesso"] = "Usuário cadastrado com sucesso !";
             return RedirectToAction(nameof(Index));
-        }
+        }       
 
         public async Task<IActionResult> Editar(Guid id)
         {
-            var usuario = await _usuarioAppServico.BuscarUsuarioParaEditarPorId(id);
+            await ListarPerfis(id);
+
+            var usuario = await _usuarioAppServico.BuscarUsuarioParaEditarPorId(id);           
 
             if (usuario == null)
                 return BadRequest();            
@@ -169,8 +175,10 @@ namespace Modelo.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(Guid id, [Bind("Id, Nome, CPF, Emails, Telefone, Enderecos, CBHs, UsuarioAtivo, CBHPrincipal")] CadastrarEditarUsuarioViewModel model)
+        public async Task<IActionResult> Editar(Guid id, [Bind("Id, Nome, CPF, Email")] CadastrarEditarUsuarioViewModel model)
         {
+            await ListarPerfis(id);
+
             if (id != model.Id)
                 ModelState.AddModelError("", "Usuário Inválido !");
 
@@ -186,6 +194,12 @@ namespace Modelo.Web.Controllers
 
             TempData["Sucesso"] = "Usuário atualizado com sucesso !";
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task ListarPerfis(Guid? idSelecionado = null)
+        {
+            var ListaPerfis = await _perfilAppServico.BuscarPerfis();
+            ViewBag.ListaPerfis = new SelectList(ListaPerfis.OrderBy(c => c.Descricao), nameof(PerfilDTO.Id), nameof(PerfilDTO.Descricao), idSelecionado);
         }
 
         public async Task<IActionResult> Historico(Guid? id, string? filtro)

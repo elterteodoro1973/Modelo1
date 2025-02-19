@@ -10,23 +10,24 @@ Html
             columns.Add(model => model.Nome).Titled("Nome").Filterable(true);
             columns.Add(model => model.Email).Titled("E-mail");
             columns.Add(model => model.CPF).Titled("CPF");
+            columns.Add(model => model.Perfil.Descricao).Titled("Perfil");
             columns.Add(model => $"<div class='dropdown dropdown-actions'>"
-+ $"<button class='btn btn-secondary dropdown-toggle btn-action' onclick='ativarbtn(this)' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-expanded='false'><span>Ações</span></button>"
-+ $"<ul class='dropdown-menu' aria-labelledby='dropdownMenuButton'>"
-+ "<li>"
-    + $"<a href='{Url.Action("Editar", "Usuarios", new { id = model.Id })}'><i class='icon-mode-edit' style='padding-right:4rem'></i> Editar</a>"
-+ "</li>"
-+ "<li>"
-    + $"<a href='{Url.Action("Permissoes", "Usuarios", new { id = model.Id })}'><i class='icon-shield' style='padding-right:4rem'></i> Permissões</a>"
-+ "</li>"
-+ "<li>"
-    + $"<a href='#' onclick='historico(`{model.Id}`)'><i class='icon-history' style='padding-right:4rem'></i>Histórico</a>"
-+ "</li>"
-+ "<li>"
-    + $"<a href='#' onclick='excluir(`{model.Id}`)'><i class='icon-delete' style='padding-right:4rem'></i> Excluir</a>"
-+ "</li>"
-+ $"</ul>"
-+ $"</div>")
+                                + $"<button class='btn btn-secondary dropdown-toggle btn-action' onclick='ativarbtn(this)' type='button' id='dropdownMenuButton' data-bs-toggle='dropdown' aria-expanded='false'><span>Ações</span></button>"
+                                + $"<ul class='dropdown-menu' aria-labelledby='dropdownMenuButton'>"
+                                + "<li>"
+                                    + $"<a href='{Url.Action("Editar", "Usuarios", new { id = model.Id })}'><i class='icon-mode-edit' style='padding-right:4rem'></i> Editar</a>"
+                                + "</li>"
+                                + "<li>"
+                                    + $"<a href='{Url.Action("Permissoes", "Usuarios", new { id = model.Id })}'><i class='icon-shield' style='padding-right:4rem'></i> Permissões</a>"
+                                + "</li>"
+                                + "<li>"
+                                    + $"<a href='#' onclick='historico(`{model.Id}`)'><i class='icon-history' style='padding-right:4rem'></i>Histórico</a>"
+                                + "</li>"
+                                + "<li>"
+                                    + $"<a href='#' onclick='excluir(`{model.Id}`)'><i class='icon-delete' style='padding-right:4rem'></i> Excluir</a>"
+                                + "</li>"
+                                + $"</ul>"
+                                + $"</div>")
 
     .Encoded(false);
 
