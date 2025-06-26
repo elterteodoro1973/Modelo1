@@ -34,7 +34,7 @@
         float:right;
     }
 
-
+https://pt.stackoverflow.com/questions/175521/alinhamento-de-div-lado-a-lado
 
 <%--
 class="container">
